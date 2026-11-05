@@ -1,0 +1,566 @@
+{
+ "Profilo 1 · tendenza su bitcoin": {
+  "dal 2018": {
+   "100": {
+    "finale": 1754.58,
+    "rendimento_annuo": 0.38300132725846225,
+    "guadagno_medio_anno_eur": 187.28,
+    "finale_dopo_tasse": 1208.57,
+    "calo_peggiore_eur": -1175.52,
+    "calo_massimo_pct": 0.42447640720560653,
+    "costi_eur": 398.23,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 84
+   },
+   "1000": {
+    "finale": 17545.83,
+    "rendimento_annuo": 0.38300132725846225,
+    "guadagno_medio_anno_eur": 1872.75,
+    "finale_dopo_tasse": 12085.71,
+    "calo_peggiore_eur": -11755.23,
+    "calo_massimo_pct": 0.424476407205606,
+    "costi_eur": 3982.28,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 84
+   },
+   "10000": {
+    "finale": 175458.3,
+    "rendimento_annuo": 0.3830013272584625,
+    "guadagno_medio_anno_eur": 18727.5,
+    "finale_dopo_tasse": 120857.06,
+    "calo_peggiore_eur": -117552.3,
+    "calo_massimo_pct": 0.4244764072056064,
+    "costi_eur": 39822.8,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 84
+   },
+   "100000": {
+    "finale": 1754582.97,
+    "rendimento_annuo": 0.3830013272584625,
+    "guadagno_medio_anno_eur": 187275.0,
+    "finale_dopo_tasse": 1208570.59,
+    "calo_peggiore_eur": -1175523.04,
+    "calo_massimo_pct": 0.4244764072056061,
+    "costi_eur": 398228.02,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 84
+   }
+  },
+  "dal 2021-07": {
+   "100": {
+    "finale": 216.28,
+    "rendimento_annuo": 0.15544536547949406,
+    "guadagno_medio_anno_eur": 21.78,
+    "finale_dopo_tasse": 177.9,
+    "calo_peggiore_eur": -144.9,
+    "calo_massimo_pct": 0.42447640720560653,
+    "costi_eur": 44.38,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 52
+   },
+   "1000": {
+    "finale": 2162.75,
+    "rendimento_annuo": 0.15544536547949428,
+    "guadagno_medio_anno_eur": 217.79,
+    "finale_dopo_tasse": 1779.05,
+    "calo_peggiore_eur": -1448.99,
+    "calo_massimo_pct": 0.4244764072056064,
+    "costi_eur": 443.75,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 52
+   },
+   "10000": {
+    "finale": 21627.54,
+    "rendimento_annuo": 0.15544536547949428,
+    "guadagno_medio_anno_eur": 2177.93,
+    "finale_dopo_tasse": 17790.45,
+    "calo_peggiore_eur": -14489.87,
+    "calo_massimo_pct": 0.4244764072056062,
+    "costi_eur": 4437.53,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 52
+   },
+   "100000": {
+    "finale": 216275.41,
+    "rendimento_annuo": 0.15544536547949406,
+    "guadagno_medio_anno_eur": 21779.28,
+    "finale_dopo_tasse": 177904.52,
+    "calo_peggiore_eur": -144898.66,
+    "calo_massimo_pct": 0.42447640720560653,
+    "costi_eur": 44375.31,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 52
+   }
+  }
+ },
+ "Profilo 1+ · con conferma di 3 chiusure": {
+  "dal 2018": {
+   "100": {
+    "finale": 1822.11,
+    "rendimento_annuo": 0.3889252376545054,
+    "guadagno_medio_anno_eur": 194.92,
+    "finale_dopo_tasse": 1253.81,
+    "calo_peggiore_eur": -658.02,
+    "calo_massimo_pct": 0.3452153583965346,
+    "costi_eur": 215.46,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 50
+   },
+   "1000": {
+    "finale": 18221.08,
+    "rendimento_annuo": 0.3889252376545054,
+    "guadagno_medio_anno_eur": 1949.18,
+    "finale_dopo_tasse": 12538.12,
+    "calo_peggiore_eur": -6580.2,
+    "calo_massimo_pct": 0.3452153583965345,
+    "costi_eur": 2154.62,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 50
+   },
+   "10000": {
+    "finale": 182210.82,
+    "rendimento_annuo": 0.3889252376545054,
+    "guadagno_medio_anno_eur": 19491.79,
+    "finale_dopo_tasse": 125381.25,
+    "calo_peggiore_eur": -65801.98,
+    "calo_massimo_pct": 0.34521535839653483,
+    "costi_eur": 21546.15,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 50
+   },
+   "100000": {
+    "finale": 1822108.18,
+    "rendimento_annuo": 0.3889252376545054,
+    "guadagno_medio_anno_eur": 194917.88,
+    "finale_dopo_tasse": 1253812.48,
+    "calo_peggiore_eur": -658019.85,
+    "calo_massimo_pct": 0.3452153583965346,
+    "costi_eur": 215461.51,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 50
+   }
+  },
+  "dal 2021-07": {
+   "100": {
+    "finale": 234.8,
+    "rendimento_annuo": 0.17337258906164377,
+    "guadagno_medio_anno_eur": 25.25,
+    "finale_dopo_tasse": 190.32,
+    "calo_peggiore_eur": -84.79,
+    "calo_massimo_pct": 0.283630582638705,
+    "costi_eur": 26.01,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 34
+   },
+   "1000": {
+    "finale": 2348.04,
+    "rendimento_annuo": 0.17337258906164377,
+    "guadagno_medio_anno_eur": 252.5,
+    "finale_dopo_tasse": 1903.19,
+    "calo_peggiore_eur": -847.95,
+    "calo_massimo_pct": 0.2836305826387048,
+    "costi_eur": 260.06,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 34
+   },
+   "10000": {
+    "finale": 23480.39,
+    "rendimento_annuo": 0.173372589061644,
+    "guadagno_medio_anno_eur": 2524.98,
+    "finale_dopo_tasse": 19031.86,
+    "calo_peggiore_eur": -8479.5,
+    "calo_massimo_pct": 0.28363058263870466,
+    "costi_eur": 2600.63,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 34
+   },
+   "100000": {
+    "finale": 234803.85,
+    "rendimento_annuo": 0.17337258906164377,
+    "guadagno_medio_anno_eur": 25249.8,
+    "finale_dopo_tasse": 190318.58,
+    "calo_peggiore_eur": -84794.96,
+    "calo_massimo_pct": 0.2836305826387049,
+    "costi_eur": 26006.3,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 34
+   }
+  }
+ },
+ "Profilo 2 · dinamico, oro di riserva": {
+  "dal 2018": {
+   "100": {
+    "finale": 2696.0,
+    "rendimento_annuo": 0.4519005370495801,
+    "guadagno_medio_anno_eur": 293.83,
+    "finale_dopo_tasse": 1839.32,
+    "calo_peggiore_eur": -1073.77,
+    "calo_massimo_pct": 0.3270996536027414,
+    "costi_eur": 968.93,
+    "ordini_saltati_sotto_5_euro": 5,
+    "ordini": 327
+   },
+   "1000": {
+    "finale": 26831.44,
+    "rendimento_annuo": 0.45111541146048406,
+    "guadagno_medio_anno_eur": 2923.75,
+    "finale_dopo_tasse": 18307.06,
+    "calo_peggiore_eur": -10686.47,
+    "calo_massimo_pct": 0.32709965360274174,
+    "costi_eur": 9648.82,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 331
+   },
+   "10000": {
+    "finale": 268231.37,
+    "rendimento_annuo": 0.4510645864873102,
+    "guadagno_medio_anno_eur": 29228.08,
+    "finale_dopo_tasse": 183015.02,
+    "calo_peggiore_eur": -106831.59,
+    "calo_massimo_pct": 0.32709965360274196,
+    "costi_eur": 96462.99,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 332
+   },
+   "100000": {
+    "finale": 2675848.33,
+    "rendimento_annuo": 0.45066828378195933,
+    "guadagno_medio_anno_eur": 291548.99,
+    "finale_dopo_tasse": 1825818.38,
+    "calo_peggiore_eur": -1065740.83,
+    "calo_massimo_pct": 0.3270996536027416,
+    "costi_eur": 962232.84,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 329
+   }
+  },
+  "dal 2021-07": {
+   "100": {
+    "finale": 298.7,
+    "rendimento_annuo": 0.22748324660445296,
+    "guadagno_medio_anno_eur": 37.22,
+    "finale_dopo_tasse": 233.13,
+    "calo_peggiore_eur": -118.97,
+    "calo_massimo_pct": 0.32709965360274174,
+    "costi_eur": 98.03,
+    "ordini_saltati_sotto_5_euro": 51,
+    "ordini": 211
+   },
+   "1000": {
+    "finale": 2973.02,
+    "rendimento_annuo": 0.2264040269777048,
+    "guadagno_medio_anno_eur": 369.56,
+    "finale_dopo_tasse": 2321.92,
+    "calo_peggiore_eur": -1184.1,
+    "calo_massimo_pct": 0.3270996536027422,
+    "costi_eur": 977.74,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 220
+   },
+   "10000": {
+    "finale": 29720.99,
+    "rendimento_annuo": 0.22633294358550282,
+    "guadagno_medio_anno_eur": 3693.89,
+    "finale_dopo_tasse": 23213.06,
+    "calo_peggiore_eur": -11837.32,
+    "calo_massimo_pct": 0.32709965360274207,
+    "costi_eur": 9774.58,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 221
+   },
+   "100000": {
+    "finale": 297811.72,
+    "rendimento_annuo": 0.2267976724567795,
+    "guadagno_medio_anno_eur": 37051.66,
+    "finale_dopo_tasse": 232533.86,
+    "calo_peggiore_eur": -118612.89,
+    "calo_massimo_pct": 0.32709965360274185,
+    "costi_eur": 98085.89,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 228
+   }
+  }
+ },
+ "Profilo 3 · bilanciato, metà e metà": {
+  "dal 2018": {
+   "100": {
+    "finale": 784.96,
+    "rendimento_annuo": 0.2626518455807394,
+    "guadagno_medio_anno_eur": 77.53,
+    "finale_dopo_tasse": 558.92,
+    "calo_peggiore_eur": -126.95,
+    "calo_massimo_pct": 0.1612524502365943,
+    "costi_eur": 99.25,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 192
+   },
+   "1000": {
+    "finale": 7849.56,
+    "rendimento_annuo": 0.2626518455807396,
+    "guadagno_medio_anno_eur": 775.27,
+    "finale_dopo_tasse": 5589.2,
+    "calo_peggiore_eur": -1269.53,
+    "calo_massimo_pct": 0.1612524502365944,
+    "costi_eur": 992.54,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 192
+   },
+   "10000": {
+    "finale": 78495.59,
+    "rendimento_annuo": 0.2626518455807394,
+    "guadagno_medio_anno_eur": 7752.72,
+    "finale_dopo_tasse": 55892.05,
+    "calo_peggiore_eur": -12695.26,
+    "calo_massimo_pct": 0.1612524502365945,
+    "costi_eur": 9925.39,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 192
+   },
+   "100000": {
+    "finale": 784955.92,
+    "rendimento_annuo": 0.2626518455807394,
+    "guadagno_medio_anno_eur": 77527.16,
+    "finale_dopo_tasse": 558920.47,
+    "calo_peggiore_eur": -126952.57,
+    "calo_massimo_pct": 0.16125245023659418,
+    "costi_eur": 99253.86,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 192
+   }
+  },
+  "dal 2021-07": {
+   "100": {
+    "finale": 222.72,
+    "rendimento_annuo": 0.16181692303662598,
+    "guadagno_medio_anno_eur": 22.99,
+    "finale_dopo_tasse": 182.22,
+    "calo_peggiore_eur": -36.02,
+    "calo_massimo_pct": 0.1497761036360853,
+    "costi_eur": 23.98,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 114
+   },
+   "1000": {
+    "finale": 2227.19,
+    "rendimento_annuo": 0.16181692303662576,
+    "guadagno_medio_anno_eur": 229.86,
+    "finale_dopo_tasse": 1822.22,
+    "calo_peggiore_eur": -360.21,
+    "calo_massimo_pct": 0.1497761036360855,
+    "costi_eur": 239.79,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 114
+   },
+   "10000": {
+    "finale": 22271.92,
+    "rendimento_annuo": 0.16181692303662598,
+    "guadagno_medio_anno_eur": 2298.63,
+    "finale_dopo_tasse": 18222.19,
+    "calo_peggiore_eur": -3602.09,
+    "calo_massimo_pct": 0.14977610363608485,
+    "costi_eur": 2397.9,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 114
+   },
+   "100000": {
+    "finale": 222719.24,
+    "rendimento_annuo": 0.16181692303662576,
+    "guadagno_medio_anno_eur": 22986.26,
+    "finale_dopo_tasse": 182221.89,
+    "calo_peggiore_eur": -36020.85,
+    "calo_massimo_pct": 0.14977610363608518,
+    "costi_eur": 23979.01,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 114
+   }
+  }
+ },
+ "Profilo 4 · prudente": {
+  "dal 2018": {
+   "100": {
+    "finale": 281.11,
+    "rendimento_annuo": 0.1241022778036176,
+    "guadagno_medio_anno_eur": 20.5,
+    "finale_dopo_tasse": 221.34,
+    "calo_peggiore_eur": -20.86,
+    "calo_massimo_pct": 0.08524744073348711,
+    "costi_eur": 16.23,
+    "ordini_saltati_sotto_5_euro": 174,
+    "ordini": 237
+   },
+   "1000": {
+    "finale": 2849.37,
+    "rendimento_annuo": 0.12582558899218999,
+    "guadagno_medio_anno_eur": 209.32,
+    "finale_dopo_tasse": 2239.08,
+    "calo_peggiore_eur": -211.42,
+    "calo_massimo_pct": 0.08087545139933627,
+    "costi_eur": 167.24,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 264
+   },
+   "10000": {
+    "finale": 28493.75,
+    "rendimento_annuo": 0.12582558899218976,
+    "guadagno_medio_anno_eur": 2093.23,
+    "finale_dopo_tasse": 22390.81,
+    "calo_peggiore_eur": -2114.16,
+    "calo_massimo_pct": 0.0808754513993365,
+    "costi_eur": 1672.44,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 264
+   },
+   "100000": {
+    "finale": 284937.49,
+    "rendimento_annuo": 0.12582558899218976,
+    "guadagno_medio_anno_eur": 20932.26,
+    "finale_dopo_tasse": 223908.12,
+    "calo_peggiore_eur": -21141.6,
+    "calo_massimo_pct": 0.08087545139933638,
+    "costi_eur": 16724.4,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 264
+   }
+  },
+  "dal 2021-07": {
+   "100": {
+    "finale": 173.98,
+    "rendimento_annuo": 0.10929181416463263,
+    "guadagno_medio_anno_eur": 13.86,
+    "finale_dopo_tasse": 149.56,
+    "calo_peggiore_eur": -12.11,
+    "calo_massimo_pct": 0.07852571454834045,
+    "costi_eur": 8.39,
+    "ordini_saltati_sotto_5_euro": 55,
+    "ordini": 167
+   },
+   "1000": {
+    "finale": 1732.86,
+    "rendimento_annuo": 0.1084653724427429,
+    "guadagno_medio_anno_eur": 137.27,
+    "finale_dopo_tasse": 1491.01,
+    "calo_peggiore_eur": -128.57,
+    "calo_massimo_pct": 0.08087545139933638,
+    "costi_eur": 85.32,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 182
+   },
+   "10000": {
+    "finale": 17328.58,
+    "rendimento_annuo": 0.10846537244274268,
+    "guadagno_medio_anno_eur": 1372.7,
+    "finale_dopo_tasse": 14910.15,
+    "calo_peggiore_eur": -1285.73,
+    "calo_massimo_pct": 0.0808754513993366,
+    "costi_eur": 853.21,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 182
+   },
+   "100000": {
+    "finale": 173285.78,
+    "rendimento_annuo": 0.1084653724427429,
+    "guadagno_medio_anno_eur": 13726.99,
+    "finale_dopo_tasse": 149101.47,
+    "calo_peggiore_eur": -12857.34,
+    "calo_massimo_pct": 0.08087545139933627,
+    "costi_eur": 8532.06,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 182
+   }
+  }
+ },
+ "Bitcoin comprato e tenuto": {
+  "dal 2018": {
+   "100": {
+    "finale": 578.3,
+    "rendimento_annuo": 0.21973187431650443,
+    "guadagno_medio_anno_eur": 54.14,
+    "finale_dopo_tasse": 420.46,
+    "calo_peggiore_eur": -463.34,
+    "calo_massimo_pct": 0.8020664335664336,
+    "costi_eur": 0.45,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 1
+   },
+   "1000": {
+    "finale": 5782.95,
+    "rendimento_annuo": 0.21973187431650443,
+    "guadagno_medio_anno_eur": 541.36,
+    "finale_dopo_tasse": 4204.58,
+    "calo_peggiore_eur": -4633.36,
+    "calo_massimo_pct": 0.8020664335664337,
+    "costi_eur": 4.48,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 1
+   },
+   "10000": {
+    "finale": 57829.52,
+    "rendimento_annuo": 0.21973187431650443,
+    "guadagno_medio_anno_eur": 5413.61,
+    "finale_dopo_tasse": 42045.78,
+    "calo_peggiore_eur": -46333.56,
+    "calo_massimo_pct": 0.8020664335664337,
+    "costi_eur": 44.8,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 1
+   },
+   "100000": {
+    "finale": 578295.18,
+    "rendimento_annuo": 0.21973187431650443,
+    "guadagno_medio_anno_eur": 54136.14,
+    "finale_dopo_tasse": 420457.77,
+    "calo_peggiore_eur": -463335.61,
+    "calo_massimo_pct": 0.8020664335664336,
+    "costi_eur": 447.98,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 1
+   }
+  },
+  "dal 2021-07": {
+   "100": {
+    "finale": 241.18,
+    "rendimento_annuo": 0.17928028814215802,
+    "guadagno_medio_anno_eur": 26.44,
+    "finale_dopo_tasse": 194.59,
+    "calo_peggiore_eur": -193.24,
+    "calo_massimo_pct": 0.7360429045559587,
+    "costi_eur": 0.45,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 1
+   },
+   "1000": {
+    "finale": 2411.85,
+    "rendimento_annuo": 0.17928028814215802,
+    "guadagno_medio_anno_eur": 264.45,
+    "finale_dopo_tasse": 1945.94,
+    "calo_peggiore_eur": -1932.39,
+    "calo_massimo_pct": 0.7360429045559587,
+    "costi_eur": 4.48,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 1
+   },
+   "10000": {
+    "finale": 24118.47,
+    "rendimento_annuo": 0.17928028814215802,
+    "guadagno_medio_anno_eur": 2644.5,
+    "finale_dopo_tasse": 19459.37,
+    "calo_peggiore_eur": -19323.95,
+    "calo_massimo_pct": 0.7360429045559587,
+    "costi_eur": 44.8,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 1
+   },
+   "100000": {
+    "finale": 241184.67,
+    "rendimento_annuo": 0.17928028814215802,
+    "guadagno_medio_anno_eur": 26444.97,
+    "finale_dopo_tasse": 194593.73,
+    "calo_peggiore_eur": -193239.45,
+    "calo_massimo_pct": 0.7360429045559587,
+    "costi_eur": 447.98,
+    "ordini_saltati_sotto_5_euro": 0,
+    "ordini": 1
+   }
+  }
+ }
+}

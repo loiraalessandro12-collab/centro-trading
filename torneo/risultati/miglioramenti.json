@@ -1,0 +1,358 @@
+{
+ "Profilo 1 (base, commissione 0,40%)": {
+  "2013-2017": {
+   "sharpe": 1.599123403480985,
+   "rendimento_annuo": 1.1839962491446556,
+   "perdita_massima": 0.7661976301275847,
+   "valore_finale_eur": 3596.7595004108853,
+   "operazioni": 23
+  },
+  "2018-2026": {
+   "sharpe": 1.1037231993305936,
+   "rendimento_annuo": 0.3825556253376845,
+   "perdita_massima": 0.42447640720560686,
+   "valore_finale_eur": 1754.582966113911,
+   "operazioni": 42
+  },
+  "2021-2026": {
+   "sharpe": 0.6727480577142985,
+   "rendimento_annuo": 0.15524560412499167,
+   "perdita_massima": 0.4244764072056064,
+   "valore_finale_eur": 216.27540974960337,
+   "operazioni": 26
+  }
+ },
+ "P1 · commissione 0,10%": {
+  "2013-2017": {
+   "sharpe": 1.6486840198505024,
+   "rendimento_annuo": 1.2492349787137451,
+   "perdita_massima": 0.7561686994910621,
+   "valore_finale_eur": 4116.59192135189,
+   "operazioni": 23
+  },
+  "2018-2026": {
+   "sharpe": 1.1860348664480904,
+   "rendimento_annuo": 0.4225177863800036,
+   "perdita_massima": 0.37404339874346404,
+   "valore_finale_eur": 2257.4450378949823,
+   "operazioni": 42
+  },
+  "2021-2026": {
+   "sharpe": 0.7824368513858125,
+   "rendimento_annuo": 0.18945864506938315,
+   "perdita_massima": 0.37404339874346393,
+   "valore_finale_eur": 252.78875049556336,
+   "operazioni": 26
+  }
+ },
+ "P1 · commissione 0,25%": {
+  "2013-2017": {
+   "sharpe": 1.6239274760574116,
+   "rendimento_annuo": 1.2163751933378992,
+   "perdita_massima": 0.7612357927099256,
+   "valore_finale_eur": 3847.904206474591,
+   "operazioni": 23
+  },
+  "2018-2026": {
+   "sharpe": 1.1449402027085318,
+   "rendimento_annuo": 0.40239445944745134,
+   "perdita_massima": 0.39978926345252064,
+   "valore_finale_eur": 1990.1957446829751,
+   "operazioni": 42
+  },
+  "2021-2026": {
+   "sharpe": 0.7276402490930653,
+   "rendimento_annuo": 0.17222738898003453,
+   "perdita_massima": 0.3997892634525192,
+   "valore_finale_eur": 233.82050588869708,
+   "operazioni": 26
+  }
+ },
+ "P1 · commissione 0,80%": {
+  "2013-2017": {
+   "sharpe": 1.5327827992756382,
+   "rendimento_annuo": 1.099948850094436,
+   "perdita_massima": 0.778931248803824,
+   "valore_finale_eur": 3004.3206137122693,
+   "operazioni": 23
+  },
+  "2018-2026": {
+   "sharpe": 0.9933809754042773,
+   "rendimento_annuo": 0.33101188393768277,
+   "perdita_massima": 0.4854589485812547,
+   "valore_finale_eur": 1253.8471662880888,
+   "operazioni": 42
+  },
+  "2021-2026": {
+   "sharpe": 0.5262802348233085,
+   "rendimento_annuo": 0.11115264095605282,
+   "perdita_massima": 0.4854589485812546,
+   "valore_finale_eur": 175.65881717574504,
+   "operazioni": 26
+  }
+ },
+ "P1 · conferma 2 chiusure": {
+  "2013-2017": {
+   "sharpe": 1.570901173375188,
+   "rendimento_annuo": 1.2097223098087118,
+   "perdita_massima": 0.7010826683166409,
+   "valore_finale_eur": 3795.2157283053493,
+   "operazioni": 17
+  },
+  "2018-2026": {
+   "sharpe": 1.0480831911336,
+   "rendimento_annuo": 0.359120955268708,
+   "perdita_massima": 0.36688358726431114,
+   "valore_finale_eur": 1508.3870906336751,
+   "operazioni": 30
+  },
+  "2021-2026": {
+   "sharpe": 0.6507824233378556,
+   "rendimento_annuo": 0.1483747965024218,
+   "perdita_massima": 0.32919274581130575,
+   "valore_finale_eur": 209.4881532132562,
+   "operazioni": 19
+  }
+ },
+ "P1 · conferma 3 chiusure": {
+  "2013-2017": {
+   "sharpe": 1.5982038788245974,
+   "rendimento_annuo": 1.2517892288894563,
+   "perdita_massima": 0.6004254131706206,
+   "valore_finale_eur": 4138.075831939823,
+   "operazioni": 14
+  },
+  "2018-2026": {
+   "sharpe": 1.108709900248558,
+   "rendimento_annuo": 0.388471727343052,
+   "perdita_massima": 0.3452153583965343,
+   "valore_finale_eur": 1822.1081843585005,
+   "operazioni": 25
+  },
+  "2021-2026": {
+   "sharpe": 0.7347134923544626,
+   "rendimento_annuo": 0.1731481137278521,
+   "perdita_massima": 0.2836305826387051,
+   "valore_finale_eur": 234.80385126345837,
+   "operazioni": 17
+  }
+ },
+ "P1 · decide solo la domenica": {
+  "2013-2017": {
+   "sharpe": 1.5320883584697507,
+   "rendimento_annuo": 1.1689343175980769,
+   "perdita_massima": 0.6224586129077927,
+   "valore_finale_eur": 3484.3945564569676,
+   "operazioni": 16
+  },
+  "2018-2026": {
+   "sharpe": 1.1475173690896863,
+   "rendimento_annuo": 0.4015765215235849,
+   "perdita_massima": 0.2782861930344427,
+   "valore_finale_eur": 1979.9535417115178,
+   "operazioni": 22
+  },
+  "2021-2026": {
+   "sharpe": 0.625757218123963,
+   "rendimento_annuo": 0.1366514113224544,
+   "perdita_massima": 0.27828619303444424,
+   "valore_finale_eur": 198.30758458008418,
+   "operazioni": 16
+  }
+ },
+ "P1 · uscita sotto la media (più lenta)": {
+  "2013-2017": {
+   "sharpe": 1.6101762126290053,
+   "rendimento_annuo": 1.3106683604967913,
+   "perdita_massima": 0.5439100915255504,
+   "valore_finale_eur": 4658.116372942711,
+   "operazioni": 12
+  },
+  "2018-2026": {
+   "sharpe": 0.8491695574005795,
+   "rendimento_annuo": 0.2816684577745552,
+   "perdita_massima": 0.4964933262118545,
+   "valore_finale_eur": 897.7399290272534,
+   "operazioni": 23
+  },
+  "2021-2026": {
+   "sharpe": 0.5332221296373194,
+   "rendimento_annuo": 0.11987653072916404,
+   "perdita_massima": 0.34394761720425215,
+   "valore_finale_eur": 183.157420704051,
+   "operazioni": 14
+  }
+ },
+ "P1 · volatilità obiettivo 60%": {
+  "2013-2017": {
+   "sharpe": 1.8817873523359507,
+   "rendimento_annuo": 0.9684799623327192,
+   "perdita_massima": 0.49067035927137415,
+   "valore_finale_eur": 2233.4354269000655,
+   "operazioni": 23
+  },
+  "2018-2026": {
+   "sharpe": 1.1402568094480492,
+   "rendimento_annuo": 0.34414693914783223,
+   "perdita_massima": 0.4244764072056072,
+   "valore_finale_eur": 1367.6089038868897,
+   "operazioni": 42
+  },
+  "2021-2026": {
+   "sharpe": 0.646639092830852,
+   "rendimento_annuo": 0.14355129914716014,
+   "perdita_massima": 0.42447640720560587,
+   "valore_finale_eur": 204.82757731404598,
+   "operazioni": 26
+  }
+ },
+ "P1 · volatilità obiettivo 40%": {
+  "2013-2017": {
+   "sharpe": 1.9382247691872745,
+   "rendimento_annuo": 0.7047230992304203,
+   "perdita_massima": 0.35279520854153457,
+   "valore_finale_eur": 1154.607438207992,
+   "operazioni": 23
+  },
+  "2018-2026": {
+   "sharpe": 1.082995468141987,
+   "rendimento_annuo": 0.25585703257138537,
+   "perdita_massima": 0.41325197504482436,
+   "valore_finale_eur": 749.9129985597986,
+   "operazioni": 42
+  },
+  "2021-2026": {
+   "sharpe": 0.5625343573530645,
+   "rendimento_annuo": 0.10340609627219077,
+   "perdita_massima": 0.413251975044825,
+   "valore_finale_eur": 169.21130795907294,
+   "operazioni": 26
+  }
+ },
+ "Profilo 2 (base, oro di riserva)": {
+  "2013-2017": {
+   "sharpe": 1.485062230358644,
+   "rendimento_annuo": 1.0523120421332859,
+   "perdita_massima": 0.8145104627251356,
+   "valore_finale_eur": 2704.2217590963514,
+   "operazioni": 46
+  },
+  "2018-2026": {
+   "sharpe": 1.1168572098347844,
+   "rendimento_annuo": 0.41320613535840445,
+   "perdita_massima": 0.3495285330309934,
+   "valore_finale_eur": 2130.0650990984677,
+   "operazioni": 102
+  },
+  "2021-2026": {
+   "sharpe": 0.7199246630888004,
+   "rendimento_annuo": 0.18804644825783146,
+   "perdita_massima": 0.3393833842729981,
+   "valore_finale_eur": 251.18864790747222,
+   "operazioni": 63
+  }
+ },
+ "P2 · commissione 0,25%": {
+  "2013-2017": {
+   "sharpe": 1.534770830390741,
+   "rendimento_annuo": 1.1142126033989719,
+   "perdita_massima": 0.7999338839177543,
+   "valore_finale_eur": 3099.05820523611,
+   "operazioni": 46
+  },
+  "2018-2026": {
+   "sharpe": 1.2115616626694483,
+   "rendimento_annuo": 0.462554284058047,
+   "perdita_massima": 0.31448108135625585,
+   "valore_finale_eur": 2885.514997178239,
+   "operazioni": 102
+  },
+  "2021-2026": {
+   "sharpe": 0.838170945957796,
+   "rendimento_annuo": 0.2306040644983418,
+   "perdita_massima": 0.29164720443174597,
+   "valore_finale_eur": 303.1803656240819,
+   "operazioni": 63
+  }
+ },
+ "P2 · conferma 2 chiusure": {
+  "2013-2017": {
+   "sharpe": 1.4917213630728863,
+   "rendimento_annuo": 1.113400032178581,
+   "perdita_massima": 0.7492243130000182,
+   "valore_finale_eur": 3093.5992970194466,
+   "operazioni": 38
+  },
+  "2018-2026": {
+   "sharpe": 1.0722251837542869,
+   "rendimento_annuo": 0.3930331718200377,
+   "perdita_massima": 0.41567065198294717,
+   "valore_finale_eur": 1875.7349557057628,
+   "operazioni": 80
+  },
+  "2021-2026": {
+   "sharpe": 0.7284604072159521,
+   "rendimento_annuo": 0.19088800932085426,
+   "perdita_massima": 0.3790907131853323,
+   "valore_finale_eur": 254.41673254843732,
+   "operazioni": 49
+  }
+ },
+ "P2 · ether di riserva invece dell'oro": {
+  "2018-2026": {
+   "sharpe": 0.7009708382687015,
+   "rendimento_annuo": 0.233761892270701,
+   "perdita_massima": 0.6326053558879744,
+   "valore_finale_eur": 640.9661270041029,
+   "operazioni": 75
+  },
+  "2021-2026": {
+   "sharpe": 0.3393853305359935,
+   "rendimento_annuo": 0.059264824979669006,
+   "perdita_massima": 0.523337663436902,
+   "valore_finale_eur": 136.03619076611218,
+   "operazioni": 46
+  }
+ },
+ "Metà P1 e metà oro con media 200 (sempre divisi)": {
+  "2013-2017": {
+   "sharpe": 1.534267686104351,
+   "rendimento_annuo": 0.5364612272677576,
+   "perdita_massima": 0.5256242267612496,
+   "valore_finale_eur": 717.7204353044606,
+   "operazioni": 50
+  },
+  "2018-2026": {
+   "sharpe": 1.2184708127836226,
+   "rendimento_annuo": 0.2442123518375221,
+   "perdita_massima": 0.1718539127392953,
+   "valore_finale_eur": 690.6077277618358,
+   "operazioni": 75
+  },
+  "2021-2026": {
+   "sharpe": 0.8989800181160694,
+   "rendimento_annuo": 0.13949104171794224,
+   "perdita_massima": 0.16768240261075473,
+   "valore_finale_eur": 200.9701214579597,
+   "operazioni": 46
+  }
+ },
+ "P1 su candele da 4 ore": {
+  "2021-2026": {
+   "sharpe": -0.4814047945550486,
+   "rendimento_annuo": -0.1459791563462418,
+   "perdita_massima": 0.6986938715012463,
+   "valore_finale_eur": 43.35752964094015,
+   "operazioni": 197
+  }
+ },
+ "P1 giornaliero, stessa finestra": {
+  "2021-2026": {
+   "sharpe": 0.6874982601781624,
+   "rendimento_annuo": 0.16015654746184382,
+   "perdita_massima": 0.4244764072056064,
+   "valore_finale_eur": 219.62047105100248,
+   "operazioni": 26
+  }
+ }
+}

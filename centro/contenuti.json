@@ -1,0 +1,202 @@
+{
+ "migliorare": [
+  {
+   "titolo": "1. Commissioni basse: la leva più forte",
+   "testo": [
+    "A parità di strategia, passare dallo 0,80% allo 0,25% per lato vale 4-6 punti l'anno. Ordini «limite» (si aspetta il proprio prezzo invece di comprare subito) costano meno degli ordini «al mercato».",
+    "Commissioni lette il 3-4 novembre 2026: Bitvavo 0,15% / 0,25%, Bitstamp 0,30% / 0,40%, Kraken Pro 0,40% / 0,80%. Le app con il tasto «compra subito» costano il 5,8-7,5% tra acquisto e vendita: da evitare.",
+    "Commissione di pareggio: negli ultimi 5 anni il profilo 1 batte bitcoin tenuto solo se si paga meno dello 0,19% a operazione; il profilo 2 fino allo 0,62%."
+   ],
+   "tabella": "<thead><tr><th>Variante</th><th class='n'>2013-2017</th><th class='n'>2018-2026</th><th class='n'>2021-2026</th></tr></thead><tbody><tr><td>Profilo 1 con 0,10%</td><td class='n'>+124,9%<br><span class='nota'>calo 76%</span></td><td class='n'>+42,3%<br><span class='nota'>calo 37%</span></td><td class='n'>+18,9%<br><span class='nota'>calo 37%</span></td></tr><tr><td>Profilo 1 con 0,25%</td><td class='n'>+121,6%<br><span class='nota'>calo 76%</span></td><td class='n'>+40,2%<br><span class='nota'>calo 40%</span></td><td class='n'>+17,2%<br><span class='nota'>calo 40%</span></td></tr><tr><td>Profilo 1 con 0,40%</td><td class='n'>+118,4%<br><span class='nota'>calo 77%</span></td><td class='n'>+38,3%<br><span class='nota'>calo 42%</span></td><td class='n'>+15,5%<br><span class='nota'>calo 42%</span></td></tr><tr><td>Profilo 1 con 0,80%</td><td class='n'>+110,0%<br><span class='nota'>calo 78%</span></td><td class='n'>+33,1%<br><span class='nota'>calo 49%</span></td><td class='n'>+11,1%<br><span class='nota'>calo 49%</span></td></tr></tbody>"
+  },
+  {
+   "titolo": "2. Oro dosato sull'oscillazione, non sulla media",
+   "testo": [
+    "Per l'oro rende di più tenerlo sempre con una quantità che si riduce quando oscilla molto (peso = 10% diviso la sua volatilità) che seguirne la tendenza. Profili 2 e 3 aggiornati così il 2026-11-04."
+   ],
+   "tabella": "<thead><tr><th>Variante</th><th class='n'>2013-2017</th><th class='n'>2018-2026</th><th class='n'>2021-2026</th></tr></thead><tbody><tr><td>Profilo 2 con media 200</td><td class='n'>+105,2%<br><span class='nota'>calo 81%</span></td><td class='n'>+41,3%<br><span class='nota'>calo 35%</span></td><td class='n'>+18,8%<br><span class='nota'>calo 34%</span></td></tr><tr><td>Profilo 2 nuovo</td><td class='n'>+107,8%<br><span class='nota'>calo 78%</span></td><td class='n'>+45,1%<br><span class='nota'>calo 33%</span></td><td class='n'>+22,7%<br><span class='nota'>calo 33%</span></td></tr><tr><td>Profilo 3 con media 200</td><td class='n'>+53,6%<br><span class='nota'>calo 53%</span></td><td class='n'>+24,4%<br><span class='nota'>calo 17%</span></td><td class='n'>+13,9%<br><span class='nota'>calo 17%</span></td></tr><tr><td>Profilo 3 nuovo</td><td class='n'>+56,9%<br><span class='nota'>calo 48%</span></td><td class='n'>+26,2%<br><span class='nota'>calo 16%</span></td><td class='n'>+16,2%<br><span class='nota'>calo 15%</span></td></tr><tr><td>Profilo 4 prudente</td><td class='n'>+21,8%<br><span class='nota'>calo 10%</span></td><td class='n'>+11,4%<br><span class='nota'>calo 9%</span></td><td class='n'>+9,8%<br><span class='nota'>calo 8%</span></td></tr></tbody>"
+  },
+  {
+   "titolo": "3. Aspettare 3 chiusure di fila",
+   "testo": [
+    "Entrare e uscire solo dopo 3 chiusure di fila oltre la banda toglie molti falsi segnali: nei test il calo peggiore scende in tutti e tre i periodi, con un rendimento simile. È il «Profilo 1+», in prova nell'arena."
+   ],
+   "tabella": "<thead><tr><th>Variante</th><th class='n'>2013-2017</th><th class='n'>2018-2026</th><th class='n'>2021-2026</th></tr></thead><tbody><tr><td>Profilo 1</td><td class='n'>+118,4%<br><span class='nota'>calo 77%</span></td><td class='n'>+38,3%<br><span class='nota'>calo 42%</span></td><td class='n'>+15,5%<br><span class='nota'>calo 42%</span></td></tr><tr><td>Conferma 2 chiusure</td><td class='n'>+121,0%<br><span class='nota'>calo 70%</span></td><td class='n'>+35,9%<br><span class='nota'>calo 37%</span></td><td class='n'>+14,8%<br><span class='nota'>calo 33%</span></td></tr><tr><td>Conferma 3 chiusure</td><td class='n'>+125,2%<br><span class='nota'>calo 60%</span></td><td class='n'>+38,8%<br><span class='nota'>calo 35%</span></td><td class='n'>+17,3%<br><span class='nota'>calo 28%</span></td></tr><tr><td>Decide solo la domenica</td><td class='n'>+116,9%<br><span class='nota'>calo 62%</span></td><td class='n'>+40,2%<br><span class='nota'>calo 28%</span></td><td class='n'>+13,7%<br><span class='nota'>calo 28%</span></td></tr></tbody>"
+  },
+  {
+   "titolo": "Dai video della playlist «AI»: media di 6 canali",
+   "testo": [
+    "La miglioria più solida uscita dai 28 video: invece di un solo canale gaussiano, la media di 6 canali vicini (periodo 100, 144, 200 e banda 1,414 o 2). Il calo peggiore scende in tutti i periodi. È in prova nell'arena come «Profilo 1 · insieme di 6 canali».",
+    "Provate e scartate: il punteggio a 4 orizzonti (TradingLab), il filtro dei mercati laterali (miglioria minima). La sorgente hl2 dà gli stessi risultati: il canale non dipende da quel dettaglio."
+   ],
+   "tabella": "<thead><tr><th>Variante</th><th class='n'>2013-2017</th><th class='n'>2018-2026</th><th class='n'>2021-2026</th><th class='n'>da apr 2025</th></tr></thead><tbody><tr><td>Profilo 1</td><td class='n'>+118,4%<br><span class='nota'>calo 77%</span></td><td class='n'>+38,3%<br><span class='nota'>calo 42%</span></td><td class='n'>+15,5%<br><span class='nota'>calo 42%</span></td><td class='n'>−10,8%<br><span class='nota'>calo 30%</span></td></tr><tr><td>Media di 6 canali</td><td class='n'>+147,5%<br><span class='nota'>calo 50%</span></td><td class='n'>+33,0%<br><span class='nota'>calo 32%</span></td><td class='n'>+13,6%<br><span class='nota'>calo 31%</span></td><td class='n'>−6,8%<br><span class='nota'>calo 24%</span></td></tr><tr><td>Filtro dei laterali</td><td class='n'>+117,4%<br><span class='nota'>calo 67%</span></td><td class='n'>+40,0%<br><span class='nota'>calo 36%</span></td><td class='n'>+14,9%<br><span class='nota'>calo 36%</span></td><td class='n'>−9,0%<br><span class='nota'>calo 27%</span></td></tr><tr><td>Sorgente hl2</td><td class='n'>+116,3%<br><span class='nota'>calo 77%</span></td><td class='n'>+38,4%<br><span class='nota'>calo 43%</span></td><td class='n'>+15,7%<br><span class='nota'>calo 43%</span></td><td class='n'>−11,8%<br><span class='nota'>calo 31%</span></td></tr><tr><td>4 orizzonti (TradingLab)</td><td class='n'>+81,2%<br><span class='nota'>calo 22%</span></td><td class='n'>+12,6%<br><span class='nota'>calo 44%</span></td><td class='n'>−1,4%<br><span class='nota'>calo 44%</span></td><td class='n'>−4,4%<br><span class='nota'>calo 24%</span></td></tr><tr><td>Freno di conto −25%</td><td class='n'>+152,8%<br><span class='nota'>calo 57%</span></td><td class='n'>+38,7%<br><span class='nota'>calo 42%</span></td><td class='n'>+15,5%<br><span class='nota'>calo 42%</span></td><td class='n'>−10,8%<br><span class='nota'>calo 30%</span></td></tr></tbody>"
+  },
+  {
+   "titolo": "Regole di sicurezza da copiare (per i soldi veri)",
+   "testo": [
+    "Dai video che raccontano guasti veri, le regole da mettere prima di usare soldi veri:",
+    "1. Il codice ha l'ultima parola: tetto massimo per ordine, controllato dopo la decisione.",
+    "2. Freno sul conto: se cala del 25% dal massimo ci si ferma 30 giorni e si riparte solo a mano (nel 2013-2017 avrebbe ridotto il calo peggiore dal 77% al 57%).",
+    "3. Allarme «numero troppo bello»: un profilo non può guadagnare in un giorno più di quanto si muove il mercato.",
+    "4. Dati vecchi o mancanti: nessuna decisione e avviso (nel centro c'è già).",
+    "5. Un solo programma alla volta, stato salvato in modo sicuro, ogni ordine scritto prima di inviarlo.",
+    "6. Ogni giorno confronto fra quello che il bot crede e il saldo vero della piattaforma.",
+    "7. Chiave API solo per comprare e vendere, mai per prelevare, mai scritta in chat; conto separato con la sola cifra che si accetta di perdere.",
+    "8. Il passaggio ai soldi veri è lento: prima settimana con tetti bassi e una scritta di colore diverso nel cruscotto."
+   ]
+  },
+  {
+   "titolo": "4. Più veloce non vuol dire meglio",
+   "testo": [
+    "Lo stesso canale gaussiano su candele da 4 ore nel 2021-2026 ha perso il 14,6% l'anno (197 operazioni) contro +16% su candele giornaliere (26 operazioni). Le strategie veloci dei reel pagano troppe commissioni."
+   ]
+  },
+  {
+   "titolo": "5. Il periodo recente è difficile",
+   "testo": [
+    "Da aprile 2025 la tendenza su bitcoin perde (profilo 1: −10,8% l'anno) e la ricerca lo conferma: il vantaggio era forte nel 2016-2020, minore dopo. Per questo i profili 2, 3 e 4 tengono anche l'oro, che nello stesso periodo ha guadagnato."
+   ],
+   "tabella": "<thead><tr><th>Variante</th><th class='n'>da apr 2025</th></tr></thead><tbody><tr><td>Profilo 1</td><td class='n'>−10,8%<br><span class='nota'>calo 30%</span></td></tr><tr><td>Profilo 2 nuovo</td><td class='n'>+1,9%<br><span class='nota'>calo 22%</span></td></tr><tr><td>Profilo 3 nuovo</td><td class='n'>+1,4%<br><span class='nota'>calo 10%</span></td></tr><tr><td>Profilo 4 prudente</td><td class='n'>+5,5%<br><span class='nota'>calo 6%</span></td></tr><tr><td>Solo oro dosato</td><td class='n'>+14,5%<br><span class='nota'>calo 12%</span></td></tr></tbody>"
+  },
+  {
+   "titolo": "6. Cosa NON migliora",
+   "testo": [
+    "Aggiungere ether o solana, cambiare la media del canale, usare un modello «AI» rifatto ogni mese, l'insieme di 5 regole insieme: nessuno ha fatto meglio dei profili attuali in tutti i periodi.",
+    "Gli agenti LLM (Claude, GPT, Grok, OpenClaw) che decidono i trade non si possono provare sul passato: conoscono già il futuro. Si possono solo mettere alla prova da oggi in avanti, con soldi finti, per mesi."
+   ]
+  },
+  {
+   "titolo": "7. Prossimi passi per migliorarlo",
+   "testo": [
+    "Lasciare girare l'arena 2-3 mesi: serve a vedere se il bot fa dal vivo ciò che fa nel test.",
+    "Scegliere la piattaforma (commissioni basse, autorizzata MiCA) e simulare i suoi costi esatti.",
+    "Solo dopo: collegare un conto vero con 100 €, ordini limite, chiave API senza prelievo e un pulsante di emergenza."
+   ]
+  }
+ ],
+ "video": [
+  {
+   "titolo": "Instagram · raccolta «Ai trading» (53 post)",
+   "sotto": "Didascalie lette e 32 audio trascritti in locale. 13 promesse non verificabili, 15 strumenti senza regole, 5 regole da provare.",
+   "righe": [
+    [
+     "EMA 9 + VWAP (Tim Hutter)",
+     "«179.000 $ in un mese» sul grafico a 3 minuti",
+     "Provata a 1 ora: con le commissioni porta 100 € a circa 5 €."
+    ],
+    [
+     "Presa delle liquidità (ICT / TJR)",
+     "Entrare dopo che il prezzo «caccia» gli stop",
+     "Perde in ogni mercato (Sharpe mediano −1,4)."
+    ],
+    [
+     "Agenti Grok/Claude su Polymarket",
+     "«50 → 5.000 $», «1.000 → 14.216 $ in 48 ore»",
+     "Non verificabili; Polymarket in Italia è oscurato dal 27/07/2026."
+    ],
+    [
+     "Kronos, «hedge fund» di agenti, 11 agenti",
+     "L'AI prevede la candela dopo / decide i trade",
+     "Nessuna valutazione indipendente; non si possono provare sul passato."
+    ],
+    [
+     "Steven Ace, guru messi alla prova",
+     "Metodo: anni mai visti, lancio della moneta, registro delle prove",
+     "È il metodo usato qui."
+    ]
+   ]
+  },
+  {
+   "titolo": "YouTube · playlist «Trading» (9 video, esclusi i 3 di Scalping The Bull)",
+   "sotto": "Sottotitoli letti per intero.",
+   "righe": [
+    [
+     "Michael Automates · Signum",
+     "Canale gaussiano long e short: «+7.492% dal 2018»",
+     "La regola migliore del torneo; la versione onesta su bitcoin fa +1.655% dal 2018."
+    ],
+    [
+     "Zinho Automates",
+     "Claude + TradingView; esempio RSI 30/70 + media 200",
+     "Strumento; la regola d'esempio perde."
+    ],
+    [
+     "Steven Ace (2 video)",
+     "26.834 strategie provate, bot sul Nasdaq",
+     "Metodo giusto; breakout sul Nasdaq non eseguibile con 100 €."
+    ],
+    [
+     "DeltaTrend, Mulham (2)",
+     "Matematica delle prop firm e del rischio",
+     "Concetti utili, nessuna regola."
+    ],
+    [
+     "Leck, 0xWarren",
+     "Meme coin e bot Grok su Pump.fun",
+     "Speculazione su monete appena nate, non testabile."
+    ]
+   ]
+  },
+  {
+   "titolo": "YouTube · playlist «AI» (28 video sul trading, su 507)",
+   "sotto": "Filtrati per titolo i 507 video; letti per intero i sottotitoli dei 28 sul trading. Nessuno dimostra un guadagno: i soldi veri mostrati sono perdite, i numeri enormi vengono da prove senza costi o da errori.",
+   "righe": [
+    [
+     "Michael Automates · canale gaussiano (2 video)",
+     "+1.895% dal 2018 su bitcoin, calo 30%, commissione 0,1%",
+     "Coerente col torneo. Nessun filtro segreto; lui stesso trova che il giornaliero solo-acquisti batte il 4 ore e lo short."
+    ],
+    [
+     "Michael Automates · «Best AI for trading»",
+     "Classifica delle sue strategie fatta da un'AI",
+     "Il «rientro rapido» e il «riconoscere i laterali» sono solo nomi: regole nel corso a pagamento."
+    ],
+    [
+     "AI Pathways (4 video)",
+     "«Claude ha fatto 102.000 $ in un mese» con le opzioni",
+     "Un mese, scelto dall'AI: non si può provare sul passato. Utili il ventaglio di curve (Monte Carlo) e gli stress test."
+    ],
+    [
+     "DaviddTech (3 video)",
+     "Claude che opera con soldi veri",
+     "Tre operazioni: aneddoti, non prove."
+    ],
+    [
+     "Algovibes · AI su 6,4 milioni di candele",
+     "Rete neurale su candele, poi 190 volte più grande",
+     "L'unico test onesto fuori campione: perde, e le commissioni (52.143 $) mangiano tutto."
+    ],
+    [
+     "TradingLab · «strategia da 60 miliardi»",
+     "Punteggio a 4 orizzonti con dimensione sulla volatilità",
+     "Provata: −1,4% l'anno negli ultimi 5 anni. Scartata."
+    ],
+    [
+     "BentoBoi · «10.000 $ all'AI»",
+     "Crypto con leva 3×",
+     "−953 $ in 7 giorni (−9,5%)."
+    ],
+    [
+     "Saleh, Trade Tactics",
+     "Regole scritte dall'AI e provate col codice",
+     "Metodo giusto, ma operano a 30 minuti e 1 ora: con le nostre commissioni non sopravvivono."
+    ],
+    [
+     "Trading Bureau · Polymarket con OpenClaw",
+     "+1.560% in una settimana",
+     "Senza costi, con un errore da 6,2 milioni di dollari; il conto vero da 100 $ è sceso a circa 30 $. Polymarket in Italia è oscurato."
+    ],
+    [
+     "Agenti AI: 32 agenti, OpenClaw, GPT-6 Astra, Castagna, Rubicon",
+     "Squadre di agenti che decidono i trade",
+     "Non provabili sul passato. Da prendere: le regole di sicurezza (tetti, freno, chiavi senza prelievo)."
+    ],
+    [
+     "Grok bot (2), Nate Herk «più soldi possibile»",
+     "Guadagnare con l'AI",
+     "Non parlano di trading."
+    ]
+   ]
+  }
+ ]
+}

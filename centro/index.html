@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Centro di controllo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+/* Terminale da tavolo: una barra fissa con prezzi e budget, schede, pannelli a griglia. Tema scuro per scelta. */
+:root {
+  --bg: #0e151d; --pannello: #15202b; --pannello2: #1b2834; --riga: #26384a; --testo: #e4ebf2; --tenue: #8fa1b3;
+  --accento: #4cc3ae; --oro: #e2ad55; --btc: #f0a04b; --compra: #3fb950; --vendi: #f2655b; --avviso: #e8c15a;
+  --f: "IBM Plex Sans", system-ui, "Segoe UI", sans-serif; --n: "JetBrains Mono", Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--testo); font: 15px/1.5 var(--f); }
+.num { font-family: var(--n); font-variant-numeric: tabular-nums; }
+header { position: sticky; top: 0; z-index: 5; background: #0b1218f2; border-bottom: 1px solid var(--riga); backdrop-filter: blur(6px); }
+.barra { max-width: 1320px; margin: 0 auto; padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; }
+.marchio { font-weight: 700; letter-spacing: .01em; }
+.marchio small { display: block; font-weight: 500; font-size: 12px; color: var(--avviso); }
+.prezzi { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.prezzo b { font-family: var(--n); font-weight: 600; }
+.prezzo span { font-size: 12px; color: var(--tenue); margin-right: 4px; }
+.su { color: var(--compra); } .giu { color: var(--vendi); }
+.destra { margin-left: auto; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.budget button, .schede button, .scelta button { background: var(--pannello); color: var(--tenue); border: 1px solid var(--riga); padding: 6px 10px; border-radius: 7px; font: 500 13px var(--f); cursor: pointer; }
+.budget button.on, .schede button.on, .scelta button.on { color: var(--testo); border-color: var(--accento); background: #173a37; }
+.budget button:focus-visible, .schede button:focus-visible, .scelta button:focus-visible, tr:focus-visible { outline: 2px solid var(--accento); outline-offset: 2px; }
+.stato { font-size: 12px; color: var(--tenue); display: flex; gap: 6px; align-items: center; }
+.pallino { width: 9px; height: 9px; border-radius: 50%; background: var(--tenue); }
+.pallino.vivo { background: var(--compra); box-shadow: 0 0 0 3px #3fb95033; }
+.pallino.vecchio { background: var(--avviso); }
+main { max-width: 1320px; margin: 0 auto; padding: 14px 16px 60px; }
+.schede { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.vista[hidden] { display: none !important; }
+.griglia { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 14px; }
+@media (max-width: 980px) { .griglia { grid-template-columns: minmax(0, 1fr); } }
+.pannello { background: var(--pannello); border: 1px solid var(--riga); border-radius: 12px; padding: 14px; min-width: 0; }
+.pannello h2 { font-size: 16px; margin: 0 0 4px; }
+.pannello .sotto { font-size: 13px; color: var(--tenue); margin: 0 0 10px; }
+.scorri { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font: 600 11px/1.3 var(--n); letter-spacing: .05em; text-transform: uppercase; color: var(--tenue); padding: 6px 8px; border-bottom: 1px solid var(--riga); white-space: nowrap; }
+td { padding: 7px 8px; border-bottom: 1px solid #1f2e3c; vertical-align: middle; }
+td.n, th.n { text-align: right; font-family: var(--n); white-space: nowrap; }
+tbody tr.clic { cursor: pointer; }
+tbody tr.clic:hover { background: var(--pannello2); }
+tbody tr.sel { background: #173a37; }
+.chip { display: inline-block; font: 600 11px/1 var(--n); padding: 4px 6px; border-radius: 5px; border: 1px solid var(--riga); color: var(--tenue); white-space: nowrap; margin: 1px 2px 1px 0; }
+.chip.profilo { color: var(--accento); border-color: #2c6d63; } .chip.video { color: var(--oro); border-color: #6e5428; }
+.chip.confronto { color: var(--tenue); } .chip.letteratura { color: #9fb5ff; border-color: #34426e; }
+.chip.dentro { color: var(--compra); border-color: #2f6b3a; } .chip.fuori { color: var(--tenue); }
+.grafico { height: 360px; } .grafico.basso { height: 220px; }
+.kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.kpi div { background: var(--pannello2); border: 1px solid var(--riga); border-radius: 10px; padding: 10px 12px; }
+.kpi span { display: block; font-size: 12px; color: var(--tenue); }
+.kpi b { font: 600 20px/1.2 var(--n); }
+.scelta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.nota { font-size: 13px; color: var(--tenue); }
+.avviso { border: 1px solid #5a4a1d; background: #2a2412; color: #f0d58a; border-radius: 10px; padding: 8px 12px; font-size: 13px; margin-bottom: 12px; }
+.errore { border-color: #6b2b27; background: #2a1514; color: #ffb4ad; }
+.carte { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+.carta h3 { font-size: 15px; margin: 0 0 6px; } .carta p { margin: 0 0 8px; font-size: 14px; }
+.vuoto { color: var(--tenue); font-size: 14px; padding: 18px 4px; }
+.lista-trade { max-height: 360px; overflow: auto; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="barra">
+    <div class="marchio">Centro di controllo<small>Soldi finti · niente ordini veri</small></div>
+    <div class="prezzi" id="prezzi"><span class="nota">Prezzi in arrivo da Kraken…</span></div>
+    <div class="destra">
+      <div class="budget" id="budget" role="group" aria-label="Budget">
+        <button data-b="100" class="on">100 €</button><button data-b="1000">1.000 €</button><button data-b="10000">10.000 €</button><button data-b="100000">100.000 €</button>
+      </div>
+      <div class="stato"><span class="pallino" id="pallino"></span><span id="aggiornato">in avvio</span></div>
+    </div>
+  </div>
+</header>
+<main>
+  <nav class="schede" id="schede" aria-label="Sezioni">
+    <button data-v="vivo" class="on">Dal vivo</button><button data-v="storico">Storico</button><button data-v="budget">Budget</button><button data-v="migliorare">Come migliorarlo</button><button data-v="video">Video analizzati</button>
+  </nav>
+
+  <section class="vista" id="v-vivo">
+    <div id="errori"></div>
+    <div class="kpi" id="kpi-vivo"></div>
+    <div class="pannello" style="margin-bottom:14px">
+      <h2>Arena dal vivo</h2>
+      <p class="sotto" id="sotto-arena">Tutte le strategie girano insieme, da oggi in avanti, sui prezzi di adesso. Tocca una riga per vedere grafico e trade.</p>
+      <div class="scorri"><table>
+        <thead><tr><th>Strategia</th><th class="n">Valore</th><th class="n">Dalla partenza</th><th>Posizione adesso</th><th class="n">Trade</th><th>Ultimo trade</th></tr></thead>
+        <tbody id="arena"></tbody>
+      </table></div>
+    </div>
+    <div class="griglia">
+      <div class="pannello"><h2 id="titolo-vivo">Grafico</h2><p class="sotto" id="sotto-vivo">Frecce verdi = acquisti, rosse = vendite.</p><p class="avviso" id="prossimo" hidden></p><div class="grafico" id="g-vivo"></div></div>
+      <div class="pannello"><h2>Valore del conto</h2><p class="sotto">Dalla partenza dell'arena, segnato al prezzo di adesso.</p><div class="grafico basso" id="g-valore"></div>
+        <h2 style="margin-top:14px">Trade dal vivo</h2><div class="lista-trade scorri"><table><thead><tr><th>Quando</th><th>Mercato</th><th>Lato</th><th class="n">Prezzo</th><th class="n">Importo</th><th class="n">Costo</th></tr></thead><tbody id="trade-vivo"></tbody></table></div></div>
+    </div>
+  </section>
+
+  <section class="vista" id="v-storico" hidden>
+    <div class="scelta" id="scelta-storico"></div>
+    <div class="kpi" id="kpi-storico"></div>
+    <div class="griglia">
+      <div class="pannello"><h2>Valore del conto nel passato</h2><p class="sotto" id="sotto-storico">Scala logaritmica: ogni raddoppio occupa lo stesso spazio. In grigio, bitcoin comprato e tenuto.</p><div class="grafico" id="g-storico"></div><p class="sotto" style="margin-top:10px">Sott'acqua: quanto il conto era sotto il suo massimo, settimana per settimana.</p><div class="grafico basso" id="g-calo"></div></div>
+      <div class="pannello"><h2>Anno per anno</h2><div class="scorri"><table><thead><tr id="anni-testa"></tr></thead><tbody id="anni"></tbody></table></div>
+        <h2 style="margin-top:14px">Trade sul passato</h2><div class="lista-trade scorri"><table><thead><tr><th>Quando</th><th>Mercato</th><th>Lato</th><th class="n">Prezzo</th><th class="n">Importo</th></tr></thead><tbody id="trade-storico"></tbody></table></div></div>
+    </div>
+    <div class="pannello" style="margin-top:14px"><h2>Prezzo con i trade</h2><p class="sotto">Bitcoin (o oro) giornaliero, con le entrate e le uscite della strategia scelta.</p><div class="grafico" id="g-prezzo-storico"></div></div>
+  </section>
+
+  <section class="vista" id="v-budget" hidden>
+    <div class="avviso">Con le commissioni in percentuale, <b>la percentuale di guadagno è la stessa con 100 o con 100.000 €</b>: cambiano solo gli euro. Con budget grandi le piattaforme fanno sconti sulle commissioni (non contati qui). Le tasse sulle plusvalenze crypto sono al 33%. Unica eccezione: con 100 € il profilo 4 deve saltare 174 piccoli ordini sotto il minimo di 5 € e rende il 12,4% invece del 12,6%.</div>
+    <div class="pannello"><h2>Quanto sarebbe diventato</h2><p class="sotto" id="sotto-budget"></p><div class="scorri"><table id="tab-budget"></table></div></div>
+  </section>
+
+  <section class="vista" id="v-migliorare" hidden><div class="carte" id="carte-migliorare"></div></section>
+  <section class="vista" id="v-video" hidden><div id="video"></div></section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const STATO = { budget: 100, vista: "vivo", selVivo: "p1", selStorico: "p1", dati: null, info: null, grafici: {} };
+const eur = (v, d = 2) => v == null ? "—" : v.toLocaleString("it-IT", { minimumFractionDigits: d, maximumFractionDigits: d }) + " €";
+const pct = (v, d = 1) => v == null ? "—" : (v >= 0 ? "+" : "−") + Math.abs(v * 100).toLocaleString("it-IT", { minimumFractionDigits: d, maximumFractionDigits: d }) + "%";
+const quando = (t, conOra = true) => { const d = new Date(t * 1000); return d.toLocaleDateString("it-IT", { day: "2-digit", month: "2-digit", year: "2-digit" }) + (conOra ? " " + d.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }) : ""); };
+const NOMI = new Proxy({ BTC_EUR: "Bitcoin", ETH_EUR: "Ether", SOL_EUR: "Solana", ORO_EUR: "Oro" }, { get: (o, k) => o[k] || String(k).replace("_EUR", "") });
+const GRUPPI = { profilo: "profilo", video: "dai video", letteratura: "letteratura", confronto: "confronto" };
+const CHART_OK = typeof LightweightCharts !== "undefined";
+
+function percorso(url) {
+  if (!window.STATICO) return url;
+  const u = new URL(url, location.href), q = u.searchParams, p = u.pathname, b = q.get("budget") || 100;
+  const mappa = { "/api/stato": `dati/stato_${b}.json`, "/api/arena": `dati/arena_${q.get("id")}_${b}.json`, "/api/storico": `dati/storico_${q.get("id")}.json`,
+    "/api/candele": `dati/candele_${q.get("mercato")}_${q.get("tf")}.json`, "/api/candele_storiche": `dati/storiche_${q.get("mercato")}.json`, "/api/info": "dati/info.json" };
+  const k = Object.keys(mappa).find(x => p.endsWith(x));
+  return k ? mappa[k] + "?v=" + Math.floor(Date.now() / 60000) : url;
+}
+async function prendi(url) { const r = await fetch(percorso(url), { cache: "no-store" }); if (!r.ok) throw new Error(url + " " + r.status); return r.json(); }
+
+function grafico(id, opzioni = {}) {
+  if (!CHART_OK) { $("#" + id).innerHTML = '<p class="vuoto">Grafici non disponibili: serve internet per caricare la libreria dei grafici.</p>'; return null; }
+  if (STATO.grafici[id]) return STATO.grafici[id];
+  const el = $("#" + id);
+  const g = LightweightCharts.createChart(el, { autoSize: true, layout: { background: { color: "transparent" }, textColor: "#8fa1b3", fontFamily: "JetBrains Mono, monospace" },
+    grid: { vertLines: { color: "#1f2e3c" }, horzLines: { color: "#1f2e3c" } }, rightPriceScale: { borderColor: "#26384a" },
+    timeScale: { borderColor: "#26384a", timeVisible: true, secondsVisible: false }, crosshair: { mode: 0 }, localization: { locale: "it-IT" }, ...opzioni });
+  STATO.grafici[id] = { g, serie: [] };
+  return STATO.grafici[id];
+}
+function svuota(o) { if (!o) return; o.serie.forEach(s => o.g.removeSeries(s)); o.serie = []; }
+
+// ---------------------------------------------------------------- testata e arena
+function disegnaPrezzi(p) {
+  const ordine = ["BTC_EUR", "ETH_EUR", "SOL_EUR", "ORO_EUR"];
+  $("#prezzi").innerHTML = ordine.filter(m => p[m]).map(m => {
+    const v = p[m].variazione_24h; const cls = v == null ? "" : (v >= 0 ? "su" : "giu");
+    return `<div class="prezzo"><span>${p[m].nome}</span><b>${eur(p[m].prezzo, p[m].prezzo > 1000 ? 0 : 2)}</b> <small class="num ${cls}">${v == null ? "" : (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(2).replace(".", ",") + "%"}</small></div>`;
+  }).join("") || '<span class="nota">Prezzi in arrivo da Kraken…</span>';
+}
+function posizione(pesi) {
+  const parti = Object.entries(pesi || {}).filter(([, w]) => w > 0.004).map(([m, w]) => `<span class="chip dentro">${NOMI[m] || m} ${Math.round(w * 100)}%</span>`);
+  const cassa = 1 - Object.values(pesi || {}).reduce((a, b) => a + Math.max(b, 0), 0);
+  if (cassa > 0.004) parti.push(`<span class="chip fuori">Euro ${Math.round(cassa * 100)}%</span>`);
+  return parti.join("");
+}
+function disegnaArena(d) {
+  const righe = d.arena.slice().sort((a, b) => b.rendimento - a.rendimento);
+  $("#arena").innerHTML = righe.map(r => {
+    const u = r.ultimo_ordine;
+    return `<tr class="clic ${r.id === STATO.selVivo ? "sel" : ""}" data-id="${r.id}" tabindex="0">
+      <td><b>${r.nome}</b><br><span class="chip ${r.gruppo}">${GRUPPI[r.gruppo]}</span><span class="chip">${r.tf === "1h" ? "1 ora" : "1 giorno"}</span></td>
+      <td class="n">${eur(r.valore)}</td><td class="n ${r.rendimento >= 0 ? "su" : "giu"}">${pct(r.rendimento, 2)}</td>
+      <td>${posizione(r.pesi)}</td><td class="n">${r.n_ordini}</td>
+      <td class="num" style="font-size:13px">${u ? `${quando(u.tempo)} · <span class="${u.lato === "compra" ? "su" : "giu"}">${u.lato}</span> ${NOMI[u.mercato]} a ${eur(u.prezzo, 0)}` : '<span class="nota">nessuno</span>'}</td></tr>`;
+  }).join("") || `<tr><td colspan="6" class="vuoto">${d.fase ? `Avvio in corso: ${d.fase}… Le prime strategie compaiono in circa 20 secondi, le altre entro 2 minuti.` : "In attesa dei primi prezzi da Kraken…"}</td></tr>`;
+  const tutte = d.strategie || [];
+  const mancanti = tutte.filter(s => !righe.some(r => r.id === s.id));
+  if (righe.length && mancanti.length) $("#arena").insertAdjacentHTML("beforeend",
+    `<tr><td colspan="6" class="vuoto">${mancanti.map(s => s.nome).join(", ")}: in arrivo${d.fase ? `, ${d.fase}` : ""}…</td></tr>`);
+  document.querySelectorAll("#arena tr.clic").forEach(tr => { const scegli = () => { STATO.selVivo = tr.dataset.id; disegnaArena(STATO.dati); dettaglioVivo(); };
+    tr.onclick = scegli; tr.onkeydown = e => { if (e.key === "Enter") scegli(); }; });
+  const n = righe.reduce((a, r) => a + r.n_ordini, 0);
+  const migliore = righe[0];
+  $("#kpi-vivo").innerHTML = `<div><span>Partenza dell'arena</span><b>${d.partenza.split("-").reverse().join("/")}</b></div>
+    <div><span>Strategie in gara</span><b>${righe.length}${mancanti.length ? ` di ${tutte.length}` : ""}</b></div><div><span>Trade fatti finora</span><b>${n}</b></div>
+    <div><span>In testa adesso</span><b style="font-size:15px">${migliore ? migliore.nome : "—"}</b></div>
+    <div><span>Calcolo dell'arena</span><b>${d.secondi_calcolo == null ? "—" : d.secondi_calcolo.toString().replace(".", ",") + " s"}</b></div>`;
+  const avvDati = (d.avvisi_dati || []).map(a => `<div class="avviso">${a}</div>`).join("");
+  $("#errori").innerHTML = avvDati + ((d.errori || []).length ? `<div class="avviso errore">Ultimo problema (${new Date(d.errori[0].quando).toLocaleString("it-IT")}):${d.errori[0].messaggio}. Il centro riprova da solo.</div>` : "");
+}
+function disegnaStato(d) {
+  const t = d.aggiornato.prezzi ? new Date(d.aggiornato.prezzi) : null;
+  const eta = t ? (Date.now() - t.getTime()) / 1000 : 1e9;
+  // sul PC i prezzi arrivano ogni minuto; sul sito di GitHub ogni ora (verde fino a 90 minuti)
+  $("#pallino").className = "pallino " + (eta < (window.STATICO ? 5400 : 150) ? "vivo" : "vecchio");
+  const ora = t ? t.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }) : "";
+  $("#aggiornato").textContent = window.STATICO ? (t ? `aggiornato alle ${ora} · ogni ora` : "in attesa del primo giro")
+    : (t ? "prezzi delle " + t.toLocaleTimeString("it-IT") : (d.fase ? "avvio in corso" : "in attesa dei prezzi"));
+}
+async function aggiorna() {
+  try {
+    const d = await prendi(`/api/stato?budget=${STATO.budget}`);
+    STATO.dati = d; disegnaPrezzi(d.prezzi || {}); disegnaArena(d); disegnaStato(d);
+    if (STATO.vista === "vivo") dettaglioVivo();
+  } catch (e) { $("#aggiornato").textContent = window.STATICO ? "dati non raggiungibili, riprovo" : "il centro non risponde: è aperto?"; $("#pallino").className = "pallino"; }
+}
+
+// ---------------------------------------------------------------- dettaglio dal vivo
+async function dettaglioVivo() {
+  const s = (STATO.dati?.strategie || []).find(x => x.id === STATO.selVivo); if (!s) return;
+  $("#titolo-vivo").textContent = s.nome;
+  $("#sotto-vivo").textContent = `${s.descrizione} Candele da ${s.tf === "1h" ? "1 ora (ultimi 30 giorni)" : "1 giorno"}. Frecce verdi = acquisti, rosse = vendite.`;
+  const pp = $("#prossimo"); const usaCanale = ["p1", "p1c", "p2", "p3"].includes(s.id) && STATO.dati?.prossimo_passo;
+  pp.hidden = !usaCanale; if (usaCanale) pp.textContent = STATO.dati.prossimo_passo + (s.id === "p1c" ? " Il profilo 1+ aspetta 3 chiusure di fila." : "");
+  if (!(STATO.dati?.arena || []).some(r => r.id === s.id)) return;   // ancora in arrivo (avvio): niente richieste a vuoto
+  let det, cand;
+  try { [det, cand] = await Promise.all([prendi(`/api/arena?id=${s.id}&budget=${STATO.budget}`), prendi(`/api/candele?mercato=${s.mercati[0]}&tf=${s.tf}`)]); }
+  catch (e) { return; }
+  const g = grafico("g-vivo"); if (g) { svuota(g);
+    const c = g.g.addCandlestickSeries({ upColor: "#3fb950", downColor: "#f2655b", borderVisible: false, wickUpColor: "#3fb950", wickDownColor: "#f2655b" });
+    c.setData(cand.map(r => ({ time: r[0], open: r[1], high: r[2], low: r[3], close: r[4] })));
+    c.setMarkers((det.ordini || []).filter(o => o.mercato === s.mercati[0]).map(o => ({ time: o.tempo, position: o.lato === "compra" ? "belowBar" : "aboveBar",
+      color: o.lato === "compra" ? "#3fb950" : "#f2655b", shape: o.lato === "compra" ? "arrowUp" : "arrowDown", text: o.lato === "compra" ? "compra" : "vende" })));
+    g.serie.push(c); }
+  const v = grafico("g-valore"); if (v) { svuota(v);
+    const l = v.g.addAreaSeries({ lineColor: "#4cc3ae", topColor: "#4cc3ae44", bottomColor: "#4cc3ae05", lineWidth: 2 });
+    l.setData((det.equity || []).map(([t, x]) => ({ time: t, value: x }))); v.serie.push(l); v.g.timeScale().fitContent(); }
+  $("#trade-vivo").innerHTML = (det.ordini || []).slice().reverse().map(o => `<tr><td class="num">${quando(o.tempo)}</td><td>${NOMI[o.mercato]}</td>
+    <td class="${o.lato === "compra" ? "su" : "giu"}">${o.lato}</td><td class="n">${eur(o.prezzo, 0)}</td><td class="n">${eur(o.importo_eur)}</td><td class="n">${eur(o.costo_eur)}</td></tr>`).join("")
+    || `<tr><td colspan="6" class="vuoto">Nessun trade ancora. ${s.tf === "1d" ? "Le strategie giornaliere decidono una volta al giorno, alle 00:00 UTC: possono passare settimane senza trade." : "Le strategie a 1 ora decidono a ogni ora piena."}</td></tr>`;
+}
+
+// ---------------------------------------------------------------- storico
+async function vistaStorico() {
+  const strat = STATO.dati?.strategie || [];
+  $("#scelta-storico").innerHTML = strat.map(s => `<button data-id="${s.id}" class="${s.id === STATO.selStorico ? "on" : ""}">${s.nome}</button>`).join("");
+  document.querySelectorAll("#scelta-storico button").forEach(b => b.onclick = () => { STATO.selStorico = b.dataset.id; vistaStorico(); });
+  const s = strat.find(x => x.id === STATO.selStorico); if (!s) return;
+  const [st, bh] = await Promise.all([prendi(`/api/storico?id=${s.id}`), prendi(`/api/storico?id=btc`)]);
+  if (!st.metriche) { $("#kpi-storico").innerHTML = '<p class="vuoto">Sto calcolando lo storico (circa un minuto dopo l\'avvio)…</p>'; return; }
+  const k = STATO.budget / 100, m = st.metriche, fine = st.equity.length ? st.equity[st.equity.length - 1][1] * k : null;
+  $("#kpi-storico").innerHTML = `<div><span>${eur(STATO.budget, 0)} dal ${st.inizio.split("-").reverse().join("/")} sarebbero diventati</span><b>${eur(fine, 0)}</b></div>
+    <div><span>Rendimento all'anno</span><b class="${m.rendimento_annuo >= 0 ? "su" : "giu"}">${pct(m.rendimento_annuo)}</b></div>
+    <div><span>Calo peggiore dal massimo</span><b class="giu">${pct(-m.calo_massimo, 0)}</b></div>
+    <div><span>Sharpe (sopra 1 è buono)</span><b>${m.sharpe.toFixed(2).replace(".", ",")}</b></div>
+    <div><span>Trade chiusi · vinti</span><b>${m.giri_chiusi ?? 0} · ${m.quota_vinti == null ? "—" : Math.round(m.quota_vinti * 100) + "%"}</b></div>
+    <div><span>Commissioni pagate</span><b>${eur(m.costi_eur * k, 0)}</b></div>`;
+  const g = grafico("g-storico", { rightPriceScale: { mode: CHART_OK ? LightweightCharts.PriceScaleMode.Logarithmic : 0, borderColor: "#26384a" } });
+  if (g) { svuota(g);
+    if (s.id !== "btc" && bh.equity && s.tf === "1d") { const b = g.g.addLineSeries({ color: "#5d6b79", lineWidth: 1 }); b.setData(bh.equity.map(([t, x]) => ({ time: t, value: x * k }))); g.serie.push(b); }
+    const l = g.g.addLineSeries({ color: "#4cc3ae", lineWidth: 2 }); l.setData(st.equity.map(([t, x]) => ({ time: t, value: x * k }))); g.serie.push(l); g.g.timeScale().fitContent(); }
+  const gc = grafico("g-calo"); if (gc) { svuota(gc); let mx = -Infinity;
+    const a = gc.g.addAreaSeries({ lineColor: "#f2655b", topColor: "#f2655b10", bottomColor: "#f2655b55", lineWidth: 1, priceFormat: { type: "custom", formatter: v => v.toFixed(0) + "%" } });
+    a.setData(st.equity.map(([t, x]) => { mx = Math.max(mx, x); return { time: t, value: (x / mx - 1) * 100 }; })); gc.serie.push(a); gc.g.timeScale().fitContent(); }
+  const anni = Object.keys(st.anni);
+  $("#anni-testa").innerHTML = anni.map(a => `<th class="n">${a}</th>`).join("");
+  $("#anni").innerHTML = `<tr>${anni.map(a => `<td class="n ${st.anni[a] >= 0 ? "su" : "giu"}">${pct(st.anni[a], 0)}</td>`).join("")}</tr>`;
+  $("#trade-storico").innerHTML = st.ordini.slice().reverse().map(o => `<tr><td class="num">${quando(o.tempo, s.tf === "1h")}</td><td>${NOMI[o.mercato]}</td>
+    <td class="${o.lato === "compra" ? "su" : "giu"}">${o.lato}</td><td class="n">${eur(o.prezzo, 0)}</td><td class="n">${eur(o.importo_eur * k)}</td></tr>`).join("");
+  const mercato = s.mercati[0];
+  const cand = s.tf === "1d" ? await prendi(`/api/candele_storiche?mercato=${mercato}`) : [];
+  const p = grafico("g-prezzo-storico"); if (p) { svuota(p);
+    if (cand.length) { const c = p.g.addCandlestickSeries({ upColor: "#3fb950", downColor: "#f2655b", borderVisible: false, wickUpColor: "#3fb950", wickDownColor: "#f2655b" });
+      c.setData(cand.map(r => ({ time: r[0], open: r[1], high: r[2], low: r[3], close: r[4] })));
+      c.setMarkers(st.ordini.filter(o => o.mercato === mercato && (o.peso_prima < 0.01 || o.peso_dopo < 0.01)).map(o => ({ time: o.tempo, position: o.lato === "compra" ? "belowBar" : "aboveBar",
+        color: o.lato === "compra" ? "#3fb950" : "#f2655b", shape: o.lato === "compra" ? "arrowUp" : "arrowDown" })));
+      p.serie.push(c); p.g.timeScale().fitContent(); }
+    else { $("#g-prezzo-storico").insertAdjacentHTML("afterbegin", ""); } }
+}
+
+// ---------------------------------------------------------------- budget, migliorie, video
+function vistaBudget() {
+  const b = STATO.info?.budget; if (!b) { $("#tab-budget").innerHTML = '<tr><td class="vuoto">Manca torneo/risultati/budget.json</td></tr>'; return; }
+  const periodo = "dal 2018";
+  $("#sotto-budget").textContent = "Test sul passato dal 1° gennaio 2018 a fine ottobre 2026, commissione 0,40% per lato, prima delle tasse. Tra parentesi: dopo il 33% di tasse sul guadagno.";
+  const cap = ["100", "1000", "10000", "100000"];
+  $("#tab-budget").innerHTML = `<thead><tr><th>Strategia</th>${cap.map(c => `<th class="n">${eur(+c, 0)}</th>`).join("")}<th class="n">All'anno</th><th class="n">Calo peggiore dal massimo</th></tr></thead><tbody>` +
+    Object.entries(b).map(([nome, v]) => { const x = v[periodo]; return `<tr><td>${nome}</td>${cap.map(c => `<td class="n">${eur(x[c].finale, 0)}<br><span class="nota">(${eur(x[c].finale_dopo_tasse, 0)})</span></td>`).join("")}
+      <td class="n">${pct(x["100"].rendimento_annuo)}</td><td class="n giu">${pct(-(x["100"].calo_massimo_pct ?? 0), 0)}</td></tr>`; }).join("") + "</tbody>";
+}
+function vistaMigliorare() {
+  const c = STATO.info?.contenuti?.migliorare || [];
+  $("#carte-migliorare").innerHTML = c.map(x => `<div class="pannello carta"><h3>${x.titolo}</h3>${x.testo.map(t => `<p>${t}</p>`).join("")}${x.tabella ? `<div class="scorri"><table>${x.tabella}</table></div>` : ""}</div>`).join("")
+    || '<p class="vuoto">Manca centro/contenuti.json</p>';
+}
+function vistaVideo() {
+  const v = STATO.info?.contenuti?.video || [];
+  $("#video").innerHTML = v.map(g => `<div class="pannello" style="margin-bottom:14px"><h2>${g.titolo}</h2><p class="sotto">${g.sotto}</p><div class="scorri"><table><thead><tr><th>Video</th><th>Cosa dice</th><th>Cosa ne è uscito</th></tr></thead><tbody>${g.righe.map(r => `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</tbody></table></div></div>`).join("")
+    || '<p class="vuoto">Manca centro/contenuti.json</p>';
+}
+
+// ---------------------------------------------------------------- comandi
+document.querySelectorAll("#budget button").forEach(b => b.onclick = () => {
+  STATO.budget = +b.dataset.b; document.querySelectorAll("#budget button").forEach(x => x.classList.toggle("on", x === b));
+  aggiorna(); if (STATO.vista === "storico") vistaStorico(); });
+document.querySelectorAll("#schede button").forEach(b => b.onclick = () => {
+  STATO.vista = b.dataset.v; document.querySelectorAll("#schede button").forEach(x => x.classList.toggle("on", x === b));
+  document.querySelectorAll(".vista").forEach(s => s.hidden = s.id !== "v-" + STATO.vista);
+  if (STATO.vista === "storico") vistaStorico(); if (STATO.vista === "budget") vistaBudget();
+  if (STATO.vista === "migliorare") vistaMigliorare(); if (STATO.vista === "video") vistaVideo();
+  if (STATO.vista === "vivo") dettaglioVivo(); });
+(async () => { try { STATO.info = await prendi("/api/info"); } catch (e) {} 
+  // durante l'avvio chiede lo stato ogni 3 secondi (così si vede il progresso), poi ogni 15
+  const giro = async () => { await aggiorna(); setTimeout(giro, window.STATICO ? 60000 : (STATO.dati && STATO.dati.fase ? 3000 : 15000)); };
+  giro(); })();
+</script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+{
+ "Profilo 1 (riferimento)": {
+  "2013-2017": {
+   "sharpe": 1.599123403480985,
+   "rendimento_annuo": 1.1839962491446556,
+   "perdita_massima": 0.7661976301275847,
+   "valore_finale_eur": 3596.7595004108853,
+   "operazioni": 23,
+   "esposizione_media": 0.4074074074074074
+  },
+  "2018-2026": {
+   "sharpe": 1.1037231993305936,
+   "rendimento_annuo": 0.3825556253376845,
+   "perdita_massima": 0.42447640720560686,
+   "valore_finale_eur": 1754.582966113911,
+   "operazioni": 42,
+   "esposizione_media": 0.30824039653035934
+  },
+  "2021-2026": {
+   "sharpe": 0.6727480577142985,
+   "rendimento_annuo": 0.15524560412499167,
+   "perdita_massima": 0.4244764072056064,
+   "valore_finale_eur": 216.27540974960337,
+   "operazioni": 26,
+   "esposizione_media": 0.2926704254228601
+  },
+  "da apr 2025": {
+   "sharpe": -0.6112449710391794,
+   "rendimento_annuo": -0.10838164953774654,
+   "perdita_massima": 0.29717913426046016,
+   "valore_finale_eur": 83.30976026304839,
+   "operazioni": 9,
+   "esposizione_media": 0.24784853700516352
+  }
+ },
+ "Profilo 2 (riferimento, oro con media 200)": {
+  "2013-2017": {
+   "sharpe": 1.485062230358644,
+   "rendimento_annuo": 1.0523120421332859,
+   "perdita_massima": 0.8145104627251356,
+   "valore_finale_eur": 2704.2217590963514,
+   "operazioni": 46,
+   "esposizione_media": 0.7490597039683135
+  },
+  "2018-2026": {
+   "sharpe": 1.1168572098347844,
+   "rendimento_annuo": 0.41320613535840445,
+   "perdita_massima": 0.3495285330309934,
+   "valore_finale_eur": 2130.0650990984677,
+   "operazioni": 102,
+   "esposizione_media": 0.8263194573907792
+  },
+  "2021-2026": {
+   "sharpe": 0.7199246630888004,
+   "rendimento_annuo": 0.18804644825783146,
+   "perdita_massima": 0.3393833842729981,
+   "valore_finale_eur": 251.18864790747222,
+   "operazioni": 63,
+   "esposizione_media": 0.8258824639680129
+  },
+  "da apr 2025": {
+   "sharpe": 0.1979987107677824,
+   "rendimento_annuo": 0.017343325144739463,
+   "perdita_massima": 0.269224434803617,
+   "valore_finale_eur": 102.77481103673144,
+   "operazioni": 20,
+   "esposizione_media": 0.8102303409868682
+  }
+ },
+ "Profilo 3 (riferimento, metà P1 + metà oro media 200)": {
+  "2013-2017": {
+   "sharpe": 1.534267686104351,
+   "rendimento_annuo": 0.5364612272677576,
+   "perdita_massima": 0.5256242267612496,
+   "valore_finale_eur": 717.7204353044606,
+   "operazioni": 50,
+   "esposizione_media": 0.438292277585989
+  },
+  "2018-2026": {
+   "sharpe": 1.2184708127836226,
+   "rendimento_annuo": 0.2442123518375221,
+   "perdita_massima": 0.1718539127392953,
+   "valore_finale_eur": 690.6077277618358,
+   "operazioni": 75,
+   "esposizione_media": 0.5397655556348872
+  },
+  "2021-2026": {
+   "sharpe": 0.8989800181160694,
+   "rendimento_annuo": 0.13949104171794224,
+   "perdita_massima": 0.16768240261075473,
+   "valore_finale_eur": 200.9701214579597,
+   "operazioni": 46,
+   "esposizione_media": 0.5491221281309112
+  },
+  "da apr 2025": {
+   "sharpe": 0.04611947241150761,
+   "rendimento_annuo": -0.0030923111280477533,
+   "perdita_massima": 0.16768240261075595,
+   "valore_finale_eur": 99.50822241629724,
+   "operazioni": 15,
+   "esposizione_media": 0.48578223712137386
+  }
+ },
+ "Donchian insieme + volatilità 25%, BTC": {
+  "2013-2017": {
+   "sharpe": 2.2233215079025963,
+   "rendimento_annuo": 0.5531547301263755,
+   "perdita_massima": 0.15284858335706575,
+   "valore_finale_eur": 753.3006619222707,
+   "operazioni": 12,
+   "esposizione_media": 0.1841634125756475
+  },
+  "2018-2026": {
+   "sharpe": 0.8110259517831284,
+   "rendimento_annuo": 0.11639076022510464,
+   "perdita_massima": 0.26270843747525463,
+   "valore_finale_eur": 264.7761774716119,
+   "operazioni": 34,
+   "esposizione_media": 0.19442443356571432
+  },
+  "2021-2026": {
+   "sharpe": 0.46736156170760923,
+   "rendimento_annuo": 0.05723825376525715,
+   "perdita_massima": 0.23710417569491282,
+   "valore_finale_eur": 134.6508037892857,
+   "operazioni": 17,
+   "esposizione_media": 0.22632811759093358
+  },
+  "da apr 2025": {
+   "sharpe": -0.4966491251697139,
+   "rendimento_annuo": -0.05579481556356314,
+   "perdita_massima": 0.16969374223004274,
+   "valore_finale_eur": 91.26644683740616,
+   "operazioni": 6,
+   "esposizione_media": 0.20750607939093832
+  }
+ },
+ "Donchian insieme, BTC e ETH metà e metà": {
+  "2018-2026": {
+   "sharpe": 0.7628079872720973,
+   "rendimento_annuo": 0.09929322204648283,
+   "perdita_massima": 0.21140474769463047,
+   "valore_finale_eur": 230.9944151299735,
+   "operazioni": 54,
+   "esposizione_media": 0.1587592464802688
+  },
+  "2021-2026": {
+   "sharpe": 0.26542290679196695,
+   "rendimento_annuo": 0.025374479904565428,
+   "perdita_massima": 0.1783886609060702,
+   "valore_finale_eur": 114.3323740500982,
+   "operazioni": 31,
+   "esposizione_media": 0.18296546482904755
+  },
+  "da apr 2025": {
+   "sharpe": -0.4060421569950963,
+   "rendimento_annuo": -0.044391097527272216,
+   "perdita_massima": 0.1556154869695009,
+   "valore_finale_eur": 93.02729219303998,
+   "operazioni": 11,
+   "esposizione_media": 0.16454246121949961
+  }
+ },
+ "BTC a sola volatilità 15% (controllo)": {
+  "2013-2017": {
+   "sharpe": 1.9091601616538516,
+   "rendimento_annuo": 0.41461731319210005,
+   "perdita_massima": 0.2894937256499528,
+   "valore_finale_eur": 490.7674041004968,
+   "operazioni": 1,
+   "esposizione_media": 0.2648692812764045
+  },
+  "2018-2026": {
+   "sharpe": 0.6824722634536472,
+   "rendimento_annuo": 0.10508036676984789,
+   "perdita_massima": 0.2924874361673794,
+   "valore_finale_eur": 241.97371517122565,
+   "operazioni": 1,
+   "esposizione_media": 0.29018621866295435
+  },
+  "2021-2026": {
+   "sharpe": 0.5519698334840435,
+   "rendimento_annuo": 0.07856039325349706,
+   "perdita_massima": 0.29248743616737727,
+   "valore_finale_eur": 149.81677051587582,
+   "operazioni": 1,
+   "esposizione_media": 0.32971612232912595
+  },
+  "da apr 2025": {
+   "sharpe": -0.3725148932968494,
+   "rendimento_annuo": -0.06882599440956871,
+   "perdita_massima": 0.2994150573370611,
+   "valore_finale_eur": 89.26966214635445,
+   "operazioni": 1,
+   "esposizione_media": 0.39196023795994817
+  }
+ },
+ "Oro a volatilità 10% (sempre dentro)": {
+  "2013-2017": {
+   "sharpe": -0.08814323820217725,
+   "rendimento_annuo": -0.01439285765687115,
+   "perdita_massima": 0.14454709725247106,
+   "valore_finale_eur": 93.56354584778815,
+   "operazioni": 1,
+   "esposizione_media": 0.7487887456249347
+  },
+  "2018-2026": {
+   "sharpe": 1.103213784414926,
+   "rendimento_annuo": 0.11753916889104254,
+   "perdita_massima": 0.15300042894469135,
+   "valore_finale_eur": 266.9507715920002,
+   "operazioni": 1,
+   "esposizione_media": 0.7601173371609015
+  },
+  "2021-2026": {
+   "sharpe": 1.3226877549133818,
+   "rendimento_annuo": 0.14825110255220375,
+   "perdita_massima": 0.1158445712026338,
+   "valore_finale_eur": 209.1298175847711,
+   "operazioni": 1,
+   "esposizione_media": 0.7141905120186379
+  },
+  "da apr 2025": {
+   "sharpe": 1.1823487014843552,
+   "rendimento_annuo": 0.14481876459212906,
+   "perdita_massima": 0.1158445712026358,
+   "valore_finale_eur": 123.88343744737612,
+   "operazioni": 1,
+   "esposizione_media": 0.5278227800165404
+  }
+ },
+ "Oro comprato e tenuto": {
+  "2013-2017": {
+   "sharpe": 0.08691676689983828,
+   "rendimento_annuo": 0.0021526999714365225,
+   "perdita_massima": 0.19678141782559289,
+   "valore_finale_eur": 100.9917062145985,
+   "operazioni": 1,
+   "esposizione_media": 0.9994029850746269
+  },
+  "2018-2026": {
+   "sharpe": 0.9052838140426281,
+   "rendimento_annuo": 0.14023837095121872,
+   "perdita_massima": 0.24506052197948736,
+   "valore_finale_eur": 318.8538877855085,
+   "operazioni": 1,
+   "esposizione_media": 0.9996899224806202
+  },
+  "2021-2026": {
+   "sharpe": 0.9931658437262373,
+   "rendimento_annuo": 0.16965909445123395,
+   "perdita_massima": 0.24506052197948902,
+   "valore_finale_eur": 230.79774547370607,
+   "operazioni": 1,
+   "esposizione_media": 0.9994866529774127
+  },
+  "da apr 2025": {
+   "sharpe": 0.6150902108383063,
+   "rendimento_annuo": 0.12746036928307247,
+   "perdita_massima": 0.24506052197948858,
+   "valore_finale_eur": 120.92207662192524,
+   "operazioni": 1,
+   "esposizione_media": 0.9982698961937716
+  }
+ },
+ "P2 con oro a volatilità 10% di riserva": {
+  "2013-2017": {
+   "sharpe": 1.5048601925352632,
+   "rendimento_annuo": 1.0782019538800678,
+   "perdita_massima": 0.7802170398337546,
+   "valore_finale_eur": 2864.255511911127,
+   "operazioni": 46,
+   "esposizione_media": 0.8335318784839347
+  },
+  "2018-2026": {
+   "sharpe": 1.2138254345226538,
+   "rendimento_annuo": 0.4513624882559846,
+   "perdita_massima": 0.3270996536027412,
+   "valore_finale_eur": 2695.997062781724,
+   "operazioni": 84,
+   "esposizione_media": 0.8378569970617809
+  },
+  "2021-2026": {
+   "sharpe": 0.8606278072640505,
+   "rendimento_annuo": 0.22718221074668143,
+   "perdita_massima": 0.32709965360274085,
+   "valore_finale_eur": 298.7013236846979,
+   "operazioni": 53,
+   "esposizione_media": 0.793548727810725
+  },
+  "da apr 2025": {
+   "sharpe": 0.19193915880255485,
+   "rendimento_annuo": 0.018523042619549734,
+   "perdita_massima": 0.22114146269350887,
+   "valore_finale_eur": 102.964581838253,
+   "operazioni": 19,
+   "esposizione_media": 0.6381849567139332
+  }
+ },
+ "Metà P1 + metà oro a volatilità 10%": {
+  "2013-2017": {
+   "sharpe": 1.60101696598281,
+   "rendimento_annuo": 0.5689770149491054,
+   "perdita_massima": 0.4817873870962779,
+   "valore_finale_eur": 790.1190462736354,
+   "operazioni": 25,
+   "esposizione_media": 0.5798931130168575
+  },
+  "2018-2026": {
+   "sharpe": 1.332612380404544,
+   "rendimento_annuo": 0.2623591662625906,
+   "perdita_massima": 0.16125245023659263,
+   "valore_finale_eur": 784.9559214096364,
+   "operazioni": 43,
+   "esposizione_media": 0.5385446447943117
+  },
+  "2021-2026": {
+   "sharpe": 1.0794712051908166,
+   "rendimento_annuo": 0.16160841583749064,
+   "perdita_massima": 0.14977610363608518,
+   "valore_finale_eur": 222.7192375880325,
+   "operazioni": 27,
+   "esposizione_media": 0.5054828983601697
+  },
+  "da apr 2025": {
+   "sharpe": 0.18513243914003374,
+   "rendimento_annuo": 0.014151988886478284,
+   "perdita_massima": 0.10035588765005155,
+   "valore_finale_eur": 102.26210135931089,
+   "operazioni": 10,
+   "esposizione_media": 0.38406569810558994
+  }
+ },
+ "Metà Donchian insieme BTC + metà oro a volatilità": {
+  "2013-2017": {
+   "sharpe": 1.6740957667963763,
+   "rendimento_annuo": 0.21848570900561493,
+   "perdita_massima": 0.10432734590910908,
+   "valore_finale_eur": 247.64725912406604,
+   "operazioni": 9,
+   "esposizione_media": 0.46041001797206277
+  },
+  "2018-2026": {
+   "sharpe": 1.1548863670237939,
+   "rendimento_annuo": 0.11360214718031125,
+   "perdita_massima": 0.08611088427292646,
+   "valore_finale_eur": 258.98401885626936,
+   "operazioni": 27,
+   "esposizione_media": 0.4818882244693718
+  },
+  "2021-2026": {
+   "sharpe": 1.0417280127386666,
+   "rendimento_annuo": 0.09804012850351307,
+   "perdita_massima": 0.07897129434464256,
+   "valore_finale_eur": 164.85901058008284,
+   "operazioni": 17,
+   "esposizione_media": 0.48218467619293875
+  },
+  "da apr 2025": {
+   "sharpe": 0.6792899738732912,
+   "rendimento_annuo": 0.055156459554288606,
+   "perdita_massima": 0.05981810260846132,
+   "valore_finale_eur": 108.92193142693559,
+   "operazioni": 7,
+   "esposizione_media": 0.36090032128150745
+  }
+ }
+}

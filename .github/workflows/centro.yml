@@ -1,0 +1,48 @@
+# Centro di controllo sempre acceso (SOLDI FINTI): ogni ora GitHub rifà i conti dell'arena con i prezzi
+# pubblici di Kraken e pubblica la pagina con GitHub Pages. Non usa chiavi né conti di trading.
+name: centro-di-controllo
+on:
+  schedule:
+    - cron: "7 * * * *"        # ogni ora al minuto 7 (GitHub può ritardare di qualche minuto)
+  workflow_dispatch: {}         # «Run workflow» per lanciarlo a mano
+permissions:
+  contents: write               # salva le candele nuove nel repository
+  pages: write
+  id-token: write
+concurrency:
+  group: centro
+  cancel-in-progress: false
+jobs:
+  aggiorna:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: github-pages
+      url: ${{ steps.pagina.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - run: pip install -r requirements.txt
+      - name: Conti dell'arena con i prezzi di Kraken
+        run: python -B centro/esporta.py sito
+      - name: Salva le candele nuove (servono per la storia oraria oltre i 30 giorni)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add centro/dati
+          if git diff --cached --quiet; then echo "Nessuna candela nuova"; exit 0; fi
+          git commit -q -m "Candele $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3; do
+            if git pull --rebase -q && git push -q; then exit 0; fi
+            sleep 10
+          done
+          echo "::warning::Candele non salvate: si recuperano al prossimo giro"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: sito
+      - id: pagina
+        uses: actions/deploy-pages@v4
