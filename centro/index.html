@@ -200,10 +200,10 @@ function disegnaArena(d) {
 function disegnaStato(d) {
   const t = d.aggiornato.prezzi ? new Date(d.aggiornato.prezzi) : null;
   const eta = t ? (Date.now() - t.getTime()) / 1000 : 1e9;
-  // sul PC i prezzi arrivano ogni minuto; sul sito di GitHub ogni ora (verde fino a 90 minuti)
+  // sul PC i prezzi arrivano ogni minuto; sul sito di GitHub ogni mezz'ora (verde fino a 90 minuti)
   $("#pallino").className = "pallino " + (eta < (window.STATICO ? 5400 : 150) ? "vivo" : "vecchio");
   const ora = t ? t.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }) : "";
-  $("#aggiornato").textContent = window.STATICO ? (t ? `aggiornato alle ${ora} · ogni ora` : "in attesa del primo giro")
+  $("#aggiornato").textContent = window.STATICO ? (t ? `aggiornato alle ${ora} · ogni mezz'ora` : "in attesa del primo giro")
     : (t ? "prezzi delle " + t.toLocaleTimeString("it-IT") : (d.fase ? "avvio in corso" : "in attesa dei prezzi"));
 }
 async function aggiorna() {

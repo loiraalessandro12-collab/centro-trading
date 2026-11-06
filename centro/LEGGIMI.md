@@ -3,11 +3,22 @@
 > **Simulazione con soldi virtuali.** I risultati passati non garantiscono quelli futuri.
 > Il centro legge solo i prezzi pubblici di Kraken: niente account, niente chiavi, niente ordini veri.
 
-## Come si apre
+## Sempre acceso (dal 2026-11-05)
+
+Il centro gira in due posti, con lo stesso codice e gli stessi conti:
+
+- **Su GitHub, ogni mezz'ora, anche a PC spento.** Pagina da aprire anche dal telefono:
+  **https://loiraalessandro12-collab.github.io/centro-trading/** (sul telefono: Condividi → «Aggiungi alla
+  schermata Home»). Repository pubblico `loiraalessandro12-collab/centro-trading`: istruzioni in `PUBBLICARE.md`.
+- **Sul PC, con avvio automatico.** Parte da solo quando accendi il PC (finestra «Centro di controllo
+  trading» ridotta a icona; se si blocca riparte da solo dopo 30 secondi). Pagina: `http://127.0.0.1:8787`,
+  prezzi ogni minuto. Per toglierlo: Win+R → `shell:startup` → cancella «Centro di controllo trading».
+
+## Come si apre a mano
 
 **Doppio clic su `avvia_centro.bat`.** Si apre una finestra nera (il «server») e poi il browser su
 `http://127.0.0.1:8787`. **Lascia aperta la finestra nera**: chiudendola il centro si ferma. La pagina
-è raggiungibile solo da questo PC.
+è raggiungibile solo da questo PC. Se il centro è già acceso (avvio automatico), apre solo la pagina.
 
 **All'avvio aspetta circa un minuto.** La pagina scrive cosa sta facendo («Avvio in corso: …»). Prezzi
 e prime 15 strategie arrivano in 10-20 secondi; il profilo 5 entra dopo circa 70 secondi, perché scarica

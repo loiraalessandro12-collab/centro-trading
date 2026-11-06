@@ -1,9 +1,9 @@
-# Centro di controllo sempre acceso (SOLDI FINTI): ogni ora GitHub rifà i conti dell'arena con i prezzi
+# Centro di controllo sempre acceso (SOLDI FINTI): ogni mezz'ora GitHub rifà i conti dell'arena con i prezzi
 # pubblici di Kraken e pubblica la pagina con GitHub Pages. Non usa chiavi né conti di trading.
 name: centro-di-controllo
 on:
   schedule:
-    - cron: "7 * * * *"        # ogni ora al minuto 7 (GitHub può ritardare di qualche minuto)
+    - cron: "17,47 * * * *"    # ogni mezz'ora (GitHub può ritardare o saltare un giro quando è carico)
   workflow_dispatch: {}         # «Run workflow» per lanciarlo a mano
 permissions:
   contents: write               # salva le candele nuove nel repository

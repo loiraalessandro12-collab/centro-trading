@@ -1,7 +1,7 @@
 # Centro di controllo · trading con soldi finti
 
 Una gara fra 16 strategie di trading con **soldi virtuali**, partita il 4 novembre 2026.
-Ogni ora GitHub prende i prezzi pubblici di Kraken, rifà i conti e aggiorna la pagina:
+Ogni mezz'ora GitHub prende i prezzi pubblici di Kraken, rifà i conti e aggiorna la pagina:
 
 **https://loiraalessandro12-collab.github.io/centro-trading/**
 
@@ -12,8 +12,8 @@ Ogni ora GitHub prende i prezzi pubblici di Kraken, rifà i conti e aggiorna la 
 
 ## Come gira
 
-`.github/workflows/centro.yml` lancia `centro/esporta.py` ogni ora (al minuto 7; GitHub può ritardare
-di qualche minuto), salva le candele nuove in `centro/dati/` e pubblica la pagina con GitHub Pages.
+`.github/workflows/centro.yml` lancia `centro/esporta.py` ogni mezz'ora (ai minuti 17 e 47; GitHub può ritardare
+o saltare un giro quando è carico), salva le candele nuove in `centro/dati/` e pubblica la pagina con GitHub Pages.
 Si può lanciare anche a mano da **Actions → centro-di-controllo → Run workflow**.
 
 Il codice arriva da una cartella sul PC con `centro/pubblica.py`: le modifiche si fanno lì, non qui.
