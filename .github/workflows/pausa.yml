@@ -14,7 +14,7 @@ concurrency:
 jobs:
   attesa:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 75
     environment: pausa          # qui GitHub fa aspettare (Settings → Environments → pausa → Wait timer)
     steps:
       - name: Rilancia il giro del centro
@@ -31,8 +31,18 @@ jobs:
               exit 1
             fi
           fi
-          for i in $(seq 1 20); do
-            if gh workflow run centro.yml -R "$GITHUB_REPOSITORY" --ref main; then echo "Giro lanciato"; exit 0; fi
+          for i in $(seq 1 15); do
+            prima=$(date -u -d '-10 seconds' +%Y-%m-%dT%H:%M:%SZ)
+            if gh workflow run centro.yml -R "$GITHUB_REPOSITORY" --ref main; then
+              # durante i guasti GitHub a volte accetta la richiesta e poi non crea il lavoro: controlla che ci sia
+              for j in 1 2 3 4 5 6; do
+                sleep 10
+                nati=$(gh run list -R "$GITHUB_REPOSITORY" --workflow centro.yml --limit 5 --json createdAt \
+                  --jq "[.[] | select(.createdAt >= \"$prima\")] | length" || echo 0)
+                if [ "${nati:-0}" -gt 0 ]; then echo "Giro lanciato"; exit 0; fi
+              done
+              echo "GitHub ha accettato la richiesta ma il giro non è comparso: riprovo"
+            fi
             sleep 60
           done
           echo "::error::Giro non lanciato: la catena si ferma. Si riaccende con Run workflow su centro-di-controllo."

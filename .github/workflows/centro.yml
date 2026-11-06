@@ -58,7 +58,7 @@ jobs:
     needs: aggiorna
     if: ${{ !cancelled() }}     # anche se il giro è andato male (es. Kraken giù): la catena non si ferma
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - name: Lancia la pausa di mezz'ora (poi la pausa rilancia questo lavoro)
         env:
@@ -69,7 +69,17 @@ jobs:
             --jq '[.[] | select(.status == "queued" or .status == "waiting" or .status == "pending" or .status == "requested")] | length' || echo 0)
           if [ "${in_attesa:-0}" -gt 0 ]; then echo "Una pausa sta già aspettando: la catena è viva"; exit 0; fi
           for i in $(seq 1 10); do
-            if gh workflow run pausa.yml -R "$GITHUB_REPOSITORY" --ref main; then echo "Pausa lanciata"; exit 0; fi
+            prima=$(date -u -d '-10 seconds' +%Y-%m-%dT%H:%M:%SZ)
+            if gh workflow run pausa.yml -R "$GITHUB_REPOSITORY" --ref main; then
+              # durante i guasti GitHub a volte accetta la richiesta e poi non crea il lavoro: controlla che ci sia
+              for j in 1 2 3 4 5 6; do
+                sleep 10
+                nate=$(gh run list -R "$GITHUB_REPOSITORY" --workflow pausa.yml --limit 5 --json createdAt \
+                  --jq "[.[] | select(.createdAt >= \"$prima\")] | length" || echo 0)
+                if [ "${nate:-0}" -gt 0 ]; then echo "Pausa lanciata"; exit 0; fi
+              done
+              echo "GitHub ha accettato la richiesta ma la pausa non è comparsa: riprovo"
+            fi
             sleep 60
           done
           echo "::error::Pausa non lanciata: la catena si ferma. Si riaccende con Run workflow su centro-di-controllo."

@@ -12,8 +12,12 @@ Ogni mezz'ora GitHub prende i prezzi pubblici di Kraken, rifà i conti e aggiorn
 
 ## Come gira
 
-`.github/workflows/centro.yml` lancia `centro/esporta.py` ogni mezz'ora (ai minuti 17 e 47; GitHub può ritardare
-o saltare un giro quando è carico), salva le candele nuove in `centro/dati/` e pubblica la pagina con GitHub Pages.
-Si può lanciare anche a mano da **Actions → centro-di-controllo → Run workflow**.
+`.github/workflows/centro.yml` lancia `centro/esporta.py`, salva le candele nuove in `centro/dati/` e pubblica la
+pagina con GitHub Pages. Alla fine lancia `.github/workflows/pausa.yml`, che aspetta 28 minuti nell'ambiente «pausa»
+(l'attesa non occupa macchine) e rilancia il giro: una catena, un giro ogni 30-31 minuti.
+
+La catena serve perché l'orario di GitHub (`schedule`) su questo repository non è mai partito. L'orario resta, ogni
+3 ore, come riserva. Se la catena si ferma, la pagina lo scrive e si riaccende da
+**Actions → centro-di-controllo → Run workflow**.
 
 Il codice arriva da una cartella sul PC con `centro/pubblica.py`: le modifiche si fanno lì, non qui.

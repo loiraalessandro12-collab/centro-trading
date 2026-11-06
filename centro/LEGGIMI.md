@@ -10,6 +10,8 @@ Il centro gira in due posti, con lo stesso codice e gli stessi conti:
 - **Su GitHub, ogni mezz'ora, anche a PC spento.** Pagina da aprire anche dal telefono:
   **https://loiraalessandro12-collab.github.io/centro-trading/** (sul telefono: Condividi → «Aggiungi alla
   schermata Home»). Repository pubblico `loiraalessandro12-collab/centro-trading`: istruzioni in `PUBBLICARE.md`.
+  Se la pagina scrive «GitHub non ha fatto gli ultimi giri», si riaccende da Actions → centro-di-controllo →
+  Run workflow.
 - **Sul PC, con avvio automatico.** Parte da solo quando accendi il PC (finestra «Centro di controllo
   trading» ridotta a icona; se si blocca riparte da solo dopo 30 secondi). Pagina: `http://127.0.0.1:8787`,
   prezzi ogni minuto. Per toglierlo: Win+R → `shell:startup` → cancella «Centro di controllo trading».
