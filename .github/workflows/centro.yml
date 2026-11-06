@@ -1,14 +1,21 @@
 # Centro di controllo sempre acceso (SOLDI FINTI): ogni mezz'ora GitHub rifà i conti dell'arena con i prezzi
 # pubblici di Kraken e pubblica la pagina con GitHub Pages. Non usa chiavi né conti di trading.
+#
+# Come resta acceso: finito il giro, questo lavoro lancia «pausa» (pausa.yml), che aspetta mezz'ora e poi
+# rilancia questo lavoro. Serve perché l'orario di GitHub (schedule) su questo repository non è mai partito
+# (problema di GitHub segnalato da molti nel 2026). L'orario resta come riserva: se GitHub un giorno lo fa
+# partire, ogni 3 ore riaccende la catena nel caso si sia fermata.
 name: centro-di-controllo
+run-name: ${{ github.event_name == 'schedule' && 'giro programmato' || github.actor == 'github-actions[bot]' && 'giro della catena' || 'giro a mano' }}
 on:
   schedule:
-    - cron: "17,47 * * * *"    # ogni mezz'ora (GitHub può ritardare o saltare un giro quando è carico)
-  workflow_dispatch: {}         # «Run workflow» per lanciarlo a mano
+    - cron: "17 */3 * * *"     # riserva (vedi sopra)
+  workflow_dispatch: {}         # «Run workflow»: un giro subito (lo usa anche la pausa)
 permissions:
   contents: write               # salva le candele nuove nel repository
   pages: write
   id-token: write
+  actions: write                # lancia la pausa di mezz'ora
 concurrency:
   group: centro
   cancel-in-progress: false
@@ -46,3 +53,24 @@ jobs:
           path: sito
       - id: pagina
         uses: actions/deploy-pages@v4
+
+  prossimo:
+    needs: aggiorna
+    if: ${{ !cancelled() }}     # anche se il giro è andato male (es. Kraken giù): la catena non si ferma
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Lancia la pausa di mezz'ora (poi la pausa rilancia questo lavoro)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # se una pausa sta già aspettando, la catena è viva: non ne serve un'altra
+          in_attesa=$(gh run list -R "$GITHUB_REPOSITORY" --workflow pausa.yml --limit 20 --json status \
+            --jq '[.[] | select(.status == "queued" or .status == "waiting" or .status == "pending" or .status == "requested")] | length' || echo 0)
+          if [ "${in_attesa:-0}" -gt 0 ]; then echo "Una pausa sta già aspettando: la catena è viva"; exit 0; fi
+          for i in $(seq 1 10); do
+            if gh workflow run pausa.yml -R "$GITHUB_REPOSITORY" --ref main; then echo "Pausa lanciata"; exit 0; fi
+            sleep 60
+          done
+          echo "::error::Pausa non lanciata: la catena si ferma. Si riaccende con Run workflow su centro-di-controllo."
+          exit 1

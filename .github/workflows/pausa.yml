@@ -1,0 +1,39 @@
+# Pausa di mezz'ora fra un giro e l'altro del centro di controllo (SOLDI FINTI).
+# Il lavoro aspetta nell'ambiente «pausa», che ha un tempo d'attesa di 28 minuti (impostazione di GitHub:
+# l'attesa non occupa macchine e non costa niente), poi rilancia centro-di-controllo.
+# Per fermare tutto: Actions → centro-di-controllo (o pausa) → «…» → Disable workflow.
+name: pausa
+run-name: "pausa di mezz'ora"
+on:
+  workflow_dispatch: {}         # la lancia centro-di-controllo alla fine di ogni giro
+permissions:
+  actions: write                # rilancia centro-di-controllo
+concurrency:
+  group: pausa
+  cancel-in-progress: false
+jobs:
+  attesa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: pausa          # qui GitHub fa aspettare (Settings → Environments → pausa → Wait timer)
+    steps:
+      - name: Rilancia il giro del centro
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # protezione: se l'attesa non c'è stata (ambiente tolto o cambiato), si ferma invece di girare a vuoto
+          creato=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" --jq .created_at || true)
+          if [ -n "$creato" ]; then
+            passati=$(( $(date -u +%s) - $(date -u -d "$creato" +%s) ))
+            echo "Pausa durata $passati secondi"
+            if [ "$passati" -lt 90 ]; then
+              echo "::error::La pausa è durata solo $passati secondi: l'ambiente «pausa» non fa aspettare. La catena si ferma."
+              exit 1
+            fi
+          fi
+          for i in $(seq 1 20); do
+            if gh workflow run centro.yml -R "$GITHUB_REPOSITORY" --ref main; then echo "Giro lanciato"; exit 0; fi
+            sleep 60
+          done
+          echo "::error::Giro non lanciato: la catena si ferma. Si riaccende con Run workflow su centro-di-controllo."
+          exit 1

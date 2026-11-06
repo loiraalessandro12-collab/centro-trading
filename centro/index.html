@@ -202,9 +202,21 @@ function disegnaStato(d) {
   const eta = t ? (Date.now() - t.getTime()) / 1000 : 1e9;
   // sul PC i prezzi arrivano ogni minuto; sul sito di GitHub ogni mezz'ora (verde fino a 90 minuti)
   $("#pallino").className = "pallino " + (eta < (window.STATICO ? 5400 : 150) ? "vivo" : "vecchio");
-  const ora = t ? t.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }) : "";
-  $("#aggiornato").textContent = window.STATICO ? (t ? `aggiornato alle ${ora} · ogni mezz'ora` : "in attesa del primo giro")
+  $("#aggiornato").textContent = window.STATICO ? etichettaStatico(t, eta)
     : (t ? "prezzi delle " + t.toLocaleTimeString("it-IT") : (d.fase ? "avvio in corso" : "in attesa dei prezzi"));
+  // sul sito di GitHub: se i giri saltano, la pagina lo dice invece di sembrare aggiornata
+  if (window.STATICO && t && eta >= 5400) $("#errori").insertAdjacentHTML("afterbegin",
+    `<div class="avviso">GitHub non ha fatto gli ultimi giri: questi dati sono di ${quantoFa(eta)}. Al prossimo giro l'arena si ricalcola dalla partenza, quindi la simulazione non perde trade.</div>`);
+}
+function quantoFa(eta) { const ore = Math.round(eta / 3600); return ore < 48 ? `${ore} ore fa` : `${Math.round(ore / 24)} giorni fa`; }
+function etichettaStatico(t, eta) {
+  if (!t) return "in attesa del primo giro";
+  const ora = t.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" });
+  if (eta < 5400) return `aggiornato alle ${ora} · ogni mezz'ora`;
+  const giorno = t.toDateString() === new Date().toDateString() ? "oggi"
+    : t.toDateString() === new Date(Date.now() - 864e5).toDateString() ? "ieri"
+    : "il " + t.toLocaleDateString("it-IT", { day: "numeric", month: "long" });
+  return `ultimo aggiornamento ${giorno} alle ${ora} (${quantoFa(eta)})`;
 }
 async function aggiorna() {
   try {
