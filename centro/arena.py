@@ -52,6 +52,25 @@ def _mix(btc: pd.Series, oro: pd.Series) -> pd.DataFrame:
     return pd.DataFrame({"BTC_EUR": btc.reindex(idx).ffill().fillna(0.0), "ORO_EUR": oro.reindex(idx).ffill().fillna(0.0)})
 
 
+def candele_liquidita(tassi: list, fine: pd.Timestamp | None = None) -> pd.DataFrame:
+    """La liquidità remunerata come «mercato»: un prezzo che cresce ogni giorno dell'€STR/365, mai sotto zero
+    (un conto in euro non applica tassi negativi). tassi = [[aaaa-mm-gg, % annuo], ...] solo nei giorni di cambio."""
+    s = pd.Series({pd.Timestamp(d): float(v) for d, v in tassi}).sort_index()
+    fine = fine if fine is not None else pd.Timestamp.now("UTC").tz_localize(None).normalize()
+    giorni = pd.date_range(s.index[0], fine, freq="D")
+    t = s.reindex(s.index.union(giorni)).ffill().reindex(giorni).clip(lower=0.0) / 100.0 / 365.0
+    c = 100.0 * (1.0 + t).cumprod()
+    o = c.shift(1).fillna(100.0)
+    return pd.DataFrame({"open": o, "high": c, "low": o, "close": c, "volume": 0.0})
+
+
+def _diluito(W: pd.DataFrame, k: float) -> pd.DataFrame:
+    """Una quota k del capitale segue la strategia, il resto è liquidità all'€STR."""
+    out = (W.fillna(0.0) * k).round(3)
+    out["LIQ"] = 1.0 - k
+    return out
+
+
 def _s(id_, nome, gruppo, tf, mercati, f, origine, descrizione):
     return {"id": id_, "nome": nome, "gruppo": gruppo, "tf": tf, "mercati": mercati, "f": f,
             "origine": origine, "descrizione": descrizione}
@@ -133,6 +152,19 @@ STRATEGIE = [
           "Metà segue il profilo 1 su bitcoin; l'altra metà va long o short sull'oro con il voto di 5 regole (CFD). "
           "Serve a vedere dal vivo se lo short sull'oro aiuta dentro una miscela."),
      "costi": {**costi(["BTC_EUR"]), **COSTI_CFD_ORO}},
+    # --- torneo dei mesi (2026-11-08, torneo/mesi.py + ricerca/mesi_positivi_2026-11.md): richiesta di Alessandro,
+    # «guadagni mese su mese con un basso rischio di perdite». Regole fissate con dati fino al 30/10/2026.
+    {**_s("p3_30", "Profilo 3 al 30% + liquidità all'€STR", "mesi", "1d", ["BTC_EUR", "ORO_EUR", "LIQ"],
+          lambda d: _diluito(R.meta_tendenza_meta_oro(d), 0.30), "Torneo dei mesi e ricerca (2026-11-08)",
+          "Il 30% del capitale segue il Profilo 3; il 70% è liquidità che matura l'€STR (oggi circa 2,4% l'anno), "
+          "per esempio su un conto remunerato. Nel torneo 2020-2026: +9,5% l'anno, 66% di mesi positivi, mese "
+          "peggiore −1,7%, calo massimo 4%."),
+     "costi": {**costi(["BTC_EUR", "ORO_EUR"]), "LIQ": Costi(commissione=0.0, slittamento=0.0)}},
+    {**_s("p3_neutra", "Profilo 3 con zona neutra", "mesi", "1d", ["BTC_EUR", "ORO_EUR"], R.meta_tendenza_meta_oro,
+          "Torneo dei mesi (2026-11-08); idea della «zona neutra» dal reel di joshuaaalampour",
+          "Come il Profilo 3, ma ribilancia solo quando un peso si sposta di oltre 20 punti: meno ordini piccoli e meno "
+          "commissioni. Nel torneo 2020-2026: +29,1% l'anno contro +26,1% del Profilo 3, anche con costi doppi."),
+     "soglia": 0.20},
 ]
 PER_ID = {s["id"]: s for s in STRATEGIE}
 
@@ -198,7 +230,7 @@ def esegui(s: dict, chiusi: dict, correnti: dict, partenza: pd.Timestamp, capita
     if len(W) < 2:
         return {"valore": capitale, "rendimento": 0.0, "pesi": {m: 0.0 for m in s["mercati"]}, "ordini": [], "equity": []}
     reg = []
-    res = simula(con_ora, W, s.get("costi") or costi(s["mercati"]), capitale=capitale, soglia=0.05,
+    res = simula(con_ora, W, s.get("costi") or costi(s["mercati"]), capitale=capitale, soglia=s.get("soglia", 0.05),
                  candele_anno=365 if tf == "1d" else 365 * 24, registro=reg)
     eq = res.equity
     in_vigore = W.iloc[-2]          # deciso alla chiusura dell'ultima candela chiusa, eseguito ora
@@ -239,7 +271,7 @@ def storico(s: dict, dati_giornalieri: dict, dati_orari: dict, capitale: float =
         W = W.loc[:, (W != 0).any()].loc[inizio:]
         reg = []
         res = simula({m: dati[m] for m in W.columns}, W, costi(W.columns), capitale=capitale, soglia=0.05, registro=reg)
-        return _storico_da(res, reg, inizio)
+        return _storico_da(res, reg, inizio, capitale)
     if s["tf"] == "1d":
         dati = {m: dati_giornalieri[m] for m in s["mercati"]}
         inizio = "2018-01-01"
@@ -252,12 +284,12 @@ def storico(s: dict, dati_giornalieri: dict, dati_orari: dict, capitale: float =
             W[m] = 0.0
     W = W[s["mercati"]].loc[inizio:]
     reg = []
-    res = simula(dati, W, s.get("costi") or costi(s["mercati"]), capitale=capitale, soglia=0.05,
+    res = simula(dati, W, s.get("costi") or costi(s["mercati"]), capitale=capitale, soglia=s.get("soglia", 0.05),
                  candele_anno=365 if s["tf"] == "1d" else 365 * 24, registro=reg)
-    return _storico_da(res, reg, inizio)
+    return _storico_da(res, reg, inizio, capitale)
 
 
-def _storico_da(res, reg, inizio) -> dict:
+def _storico_da(res, reg, inizio, capitale: float = 100.0) -> dict:
     eq = res.equity
     gg = eq.groupby(eq.index.normalize()).last()
     sett = gg.resample("W-SUN").last().dropna()
@@ -266,7 +298,12 @@ def _storico_da(res, reg, inizio) -> dict:
         prec = gg[gg.index.year < a]
         partenza = prec.iloc[-1] if len(prec) else g.iloc[0]
         anni[int(a)] = float(g.iloc[-1] / partenza - 1)
+    # valore a fine giornata per ogni giorno di calendario (i giorni senza candela tengono quello del giorno prima):
+    # serve alla pagina per i filtri di periodo, i mesi e il confronto tra strategie. «base» = capitale di partenza.
+    cal = gg.reindex(pd.date_range(gg.index[0], gg.index[-1], freq="D")).ffill()
     return {"inizio": inizio, "metriche": {**_metriche(gg, 1), "costi_eur": float(res.costi), "ordini": res.n_ordini,
                                            **_operazioni(reg)},
             "anni": anni, "equity": [[_tempo(t), round(float(v), 2)] for t, v in sett.items()],
-            "ordini": [{**o, "tempo": _tempo(o["tempo"])} for o in reg]}
+            "ordini": [{**o, "tempo": _tempo(o["tempo"])} for o in reg],
+            "giorni": {"dal": cal.index[0].strftime("%Y-%m-%d"), "base": float(capitale),
+                       "v": [float(f"{float(v):.6g}") for v in cal.values]}}   # 6 cifre: precisione 0,001%

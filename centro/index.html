@@ -55,6 +55,7 @@ tbody tr.sel { background: #173a37; }
 .chip.confronto { color: var(--tenue); } .chip.letteratura { color: #9fb5ff; border-color: #34426e; }
 .chip.dentro { color: var(--compra); border-color: #2f6b3a; } .chip.fuori { color: var(--tenue); }
 .chip.oro { color: #e8c766; border-color: #7a6a2c; } .chip.mix { color: #ff9f7a; border-color: #7a4a35; } .chip.short { color: var(--vendi, #f2655b); border-color: #7a3530; }
+.chip.mesi { color: #7fd1e8; border-color: #2c5f6e; }
 .grafico { height: 360px; } .grafico.basso { height: 220px; }
 .kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 12px; }
 .kpi div { background: var(--pannello2); border: 1px solid var(--riga); border-radius: 10px; padding: 10px 12px; }
@@ -73,6 +74,22 @@ tbody tr.sel { background: #173a37; }
 .carta h3 { font-size: 15px; margin: 0 0 6px; } .carta p { margin: 0 0 8px; font-size: 14px; }
 .vuoto { color: var(--tenue); font-size: 14px; padding: 18px 4px; }
 .lista-trade { max-height: 360px; overflow: auto; }
+/* storico: periodo, mese per mese, confronto */
+.dal-al { display: flex; gap: 8px 16px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--tenue); }
+.dal-al select { background: var(--pannello2); color: var(--testo); border: 1px solid var(--riga); border-radius: 7px; padding: 5px 8px; font: 500 13px var(--f); margin-left: 6px; }
+#periodi { margin-bottom: 8px; }
+table.mesi th, table.mesi td { padding: 5px 6px; text-align: right; font: 12.5px var(--n); white-space: nowrap; }
+table.mesi th:first-child, table.mesi td:first-child { text-align: left; color: var(--tenue); }
+table.mesi td.tot { font-weight: 600; border-left: 1px solid var(--riga); }
+th.ordina { cursor: pointer; user-select: none; } th.ordina:hover { color: var(--testo); }
+th.ordina.on { color: var(--accento); }
+.kpi b small { display: block; font: 500 12px/1.35 var(--f); color: var(--tenue); margin-top: 3px; }
+.piccolo { font-size: 12px; color: var(--tenue); }
+/* sul telefono le file di bottoni lunghe scorrono di lato invece di occupare mezza pagina */
+@media (max-width: 700px) {
+  #scelta-storico, #periodi { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
+  #scelta-storico button, #periodi button { flex: 0 0 auto; }
+}
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -101,7 +118,7 @@ tbody tr.sel { background: #173a37; }
       <h2>Arena dal vivo</h2>
       <p class="sotto" id="sotto-arena">Tutte le strategie girano insieme, da oggi in avanti, sui prezzi di adesso. Tocca una riga per vedere grafico e trade.</p>
       <div class="scorri"><table>
-        <thead><tr><th>Strategia</th><th class="n">Valore</th><th class="n">Dalla partenza</th><th>Posizione adesso</th><th class="n">Trade</th><th>Ultimo trade</th></tr></thead>
+        <thead><tr><th>Strategia</th><th class="n">Valore</th><th class="n">Dalla partenza</th><th title="Confronto con tutti i periodi della stessa durata nello storico">Rispetto al passato</th><th>Posizione adesso</th><th class="n">Trade</th><th>Ultimo trade</th></tr></thead>
         <tbody id="arena"></tbody>
       </table></div>
     </div>
@@ -112,6 +129,11 @@ tbody tr.sel { background: #173a37; }
       <div class="grafico" id="g-gara"></div>
       <ul class="legenda-gara" id="legenda-gara"></ul>
     </div>
+    <div class="pannello" style="margin-bottom:14px">
+      <h2>Il bias di domani, alla Lil Fish</h2>
+      <p class="sotto">La regola che Lil Fish (YouTube @not_a_lil_fish) usa ogni sera, dal modello frattale di TTrades: se oggi il prezzo esce dal range di ieri e richiude dentro, domani si va dall'altra parte; se chiude fuori, si va nel verso della rottura. Accanto, quante volte ha indovinato il verso della chiusura del giorno dopo nelle ultime 400 giornate: intorno al 50% vuol dire che, da sola, non prevede niente.</p>
+      <div class="scorri"><table><thead><tr><th>Mercato</th><th>Bias per domani</th><th>Perché</th><th class="n">Obiettivo</th><th class="n">Indovinato (400 giorni)</th></tr></thead><tbody id="bias-fish"></tbody></table></div>
+    </div>
     <div class="griglia">
       <div class="pannello"><h2 id="titolo-vivo">Grafico</h2><p class="sotto" id="sotto-vivo">Frecce verdi = acquisti, rosse = vendite.</p><p class="avviso" id="prossimo" hidden></p><div class="grafico" id="g-vivo"></div></div>
       <div class="pannello"><h2>Valore del conto</h2><p class="sotto">Dalla partenza dell'arena, segnato al prezzo di adesso.</p><div class="grafico basso" id="g-valore"></div>
@@ -121,12 +143,20 @@ tbody tr.sel { background: #173a37; }
 
   <section class="vista" id="v-storico" hidden>
     <div class="scelta" id="scelta-storico"></div>
+    <div class="pannello" style="margin-bottom:12px">
+      <h2>Periodo</h2>
+      <p class="sotto" id="sotto-periodo">Scegli il periodo: numeri, grafici, mesi e confronto qui sotto si ricalcolano.</p>
+      <div class="scelta" id="periodi"></div>
+      <div class="dal-al"><label>Dal<select id="dal" aria-label="Dal mese"></select></label><label>al<select id="al" aria-label="Al mese"></select></label></div>
+    </div>
     <div class="kpi" id="kpi-storico"></div>
     <div class="griglia">
-      <div class="pannello"><h2>Valore del conto nel passato</h2><p class="sotto" id="sotto-storico">Scala logaritmica: ogni raddoppio occupa lo stesso spazio. In grigio, bitcoin comprato e tenuto.</p><div class="grafico" id="g-storico"></div><p class="sotto" style="margin-top:10px">Sott'acqua: quanto il conto era sotto il suo massimo, settimana per settimana.</p><div class="grafico basso" id="g-calo"></div></div>
-      <div class="pannello"><h2>Anno per anno</h2><div class="scorri"><table><thead><tr id="anni-testa"></tr></thead><tbody id="anni"></tbody></table></div>
-        <h2 style="margin-top:14px">Trade sul passato</h2><div class="lista-trade scorri"><table><thead><tr><th>Quando</th><th>Mercato</th><th>Lato</th><th class="n">Prezzo</th><th class="n">Importo</th></tr></thead><tbody id="trade-storico"></tbody></table></div></div>
+      <div class="pannello"><h2>Valore del conto nel periodo</h2><p class="sotto" id="sotto-storico">In grigio, bitcoin comprato e tenuto.</p><div class="grafico" id="g-storico"></div><p class="sotto" style="margin-top:10px">Sott'acqua: quanto il conto era sotto il suo massimo, settimana per settimana.</p><div class="grafico basso" id="g-calo"></div></div>
+      <div class="pannello"><h2>Mese per mese</h2><p class="sotto">Verde = mese chiuso in guadagno, rosso = in perdita, grigio = in pari (ferma in euro). L'ultima colonna è il totale dell'anno.</p>
+        <div class="scorri"><table class="mesi"><thead><tr id="mesi-testa"></tr></thead><tbody id="mesi"></tbody></table></div>
+        <h2 style="margin-top:14px">Trade nel periodo</h2><div class="lista-trade scorri"><table><thead><tr><th>Quando</th><th>Mercato</th><th>Lato</th><th class="n">Prezzo</th><th class="n">Importo</th></tr></thead><tbody id="trade-storico"></tbody></table></div></div>
     </div>
+    <div class="pannello" style="margin-top:14px"><h2>Tutte le strategie nel periodo</h2><p class="sotto" id="sotto-confronto">Tocca il titolo di una colonna per ordinare, una riga per vederla qui sopra.</p><div class="scorri"><table id="tab-confronto"></table></div></div>
     <div class="pannello" style="margin-top:14px"><h2>Prezzo con i trade</h2><p class="sotto">Bitcoin (o oro) giornaliero, con le entrate e le uscite della strategia scelta.</p><div class="grafico" id="g-prezzo-storico"></div></div>
   </section>
 
@@ -145,8 +175,8 @@ const STATO = { budget: 100, vista: "vivo", selVivo: "p1", selStorico: "p1", dat
 const eur = (v, d = 2) => v == null ? "—" : v.toLocaleString("it-IT", { minimumFractionDigits: d, maximumFractionDigits: d }) + " €";
 const pct = (v, d = 1) => v == null ? "—" : (v >= 0 ? "+" : "−") + Math.abs(v * 100).toLocaleString("it-IT", { minimumFractionDigits: d, maximumFractionDigits: d }) + "%";
 const quando = (t, conOra = true) => { const d = new Date(t * 1000); return d.toLocaleDateString("it-IT", { day: "2-digit", month: "2-digit", year: "2-digit" }) + (conOra ? " " + d.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }) : ""); };
-const NOMI = new Proxy({ BTC_EUR: "Bitcoin", ETH_EUR: "Ether", SOL_EUR: "Solana", ORO_EUR: "Oro" }, { get: (o, k) => o[k] || String(k).replace("_EUR", "") });
-const GRUPPI = { profilo: "profilo", video: "dai video", letteratura: "letteratura", confronto: "confronto", oro: "solo oro", mix: "oro + bitcoin" };
+const NOMI = new Proxy({ BTC_EUR: "Bitcoin", ETH_EUR: "Ether", SOL_EUR: "Solana", ORO_EUR: "Oro", LIQ: "Liquidità" }, { get: (o, k) => o[k] || String(k).replace("_EUR", "") });
+const GRUPPI = { profilo: "profilo", video: "dai video", letteratura: "letteratura", confronto: "confronto", oro: "solo oro", mix: "oro + bitcoin", mesi: "mesi regolari" };
 // ordini: «vende» che apre uno short e «compra» che lo chiude si chiamano col loro nome
 const SHORT = 0.004;
 function azione(o) {
@@ -160,7 +190,7 @@ const CHART_OK = typeof LightweightCharts !== "undefined";
 function percorso(url) {
   if (!window.STATICO) return url;
   const u = new URL(url, location.href), q = u.searchParams, p = u.pathname, b = q.get("budget") || 100;
-  const mappa = { "/api/stato": `dati/stato_${b}.json`, "/api/arena": `dati/arena_${q.get("id")}_${b}.json`, "/api/storico": `dati/storico_${q.get("id")}.json`,
+  const mappa = { "/api/stato": `dati/stato_${b}.json`, "/api/arena": `dati/arena_${q.get("id")}_${b}.json`, "/api/storico_tutte": "dati/storico_tutte.json", "/api/storico": `dati/storico_${q.get("id")}.json`,
     "/api/candele": `dati/candele_${q.get("mercato")}_${q.get("tf")}.json`, "/api/candele_storiche": `dati/storiche_${q.get("mercato")}.json`, "/api/info": "dati/info.json" };
   const k = Object.keys(mappa).find(x => p.endsWith(x));
   return k ? mappa[k] + "?v=" + Math.floor(Date.now() / 60000) : url;
@@ -202,13 +232,14 @@ function disegnaArena(d) {
     return `<tr class="clic ${r.id === STATO.selVivo ? "sel" : ""}" data-id="${r.id}" tabindex="0">
       <td><b>${r.nome}</b><br><span class="chip ${r.gruppo}">${GRUPPI[r.gruppo]}</span><span class="chip">${r.tf === "1h" ? "1 ora" : "1 giorno"}</span></td>
       <td class="n">${eur(r.valore)}</td><td class="n ${r.rendimento >= 0 ? "su" : "giu"}">${pct(r.rendimento, 2)}</td>
+      <td>${nellaNorma(r.id, d.partenza, r.rendimento)}</td>
       <td>${posizione(r.pesi)}</td><td class="n">${r.n_ordini}</td>
-      <td class="num" style="font-size:13px">${u ? `${quando(u.tempo)} · <span class="${azione(u).su ? "su" : "giu"}">${azione(u).testo}</span> ${NOMI[u.mercato]} a ${eur(u.prezzo, 0)}` : '<span class="nota">nessuno</span>'}</td></tr>`;
-  }).join("") || `<tr><td colspan="6" class="vuoto">${d.fase ? `Avvio in corso: ${d.fase}… Le prime strategie compaiono in circa 20 secondi, le altre entro 2 minuti.` : "In attesa dei primi prezzi da Kraken…"}</td></tr>`;
+      <td class="num" style="font-size:13px">${u ? `${quando(u.tempo)} · <span class="${azione(u).su ? "su" : "giu"}">${azione(u).testo}</span> ${NOMI[u.mercato]}${u.mercato === "LIQ" ? "" : " a " + eur(u.prezzo, 0)}` : '<span class="nota">nessuno</span>'}</td></tr>`;
+  }).join("") || `<tr><td colspan="7" class="vuoto">${d.fase ? `Avvio in corso: ${d.fase}… Le prime strategie compaiono in circa 20 secondi, le altre entro 2 minuti.` : "In attesa dei primi prezzi da Kraken…"}</td></tr>`;
   const tutte = d.strategie || [];
   const mancanti = tutte.filter(s => !righe.some(r => r.id === s.id));
   if (righe.length && mancanti.length) $("#arena").insertAdjacentHTML("beforeend",
-    `<tr><td colspan="6" class="vuoto">${mancanti.map(s => s.nome).join(", ")}: in arrivo${d.fase ? `, ${d.fase}` : ""}…</td></tr>`);
+    `<tr><td colspan="7" class="vuoto">${mancanti.map(s => s.nome).join(", ")}: in arrivo${d.fase ? `, ${d.fase}` : ""}…</td></tr>`);
   document.querySelectorAll("#arena tr.clic").forEach(tr => { const scegli = () => { STATO.selVivo = tr.dataset.id; disegnaArena(STATO.dati); dettaglioVivo(); };
     tr.onclick = scegli; tr.onkeydown = e => { if (e.key === "Enter") scegli(); }; });
   const n = righe.reduce((a, r) => a + r.n_ordini, 0);
@@ -227,7 +258,7 @@ function disegnaArena(d) {
   $("#errori").innerHTML = avvDati + ((d.errori || []).length ? `<div class="avviso errore">Ultimo problema (${new Date(d.errori[0].quando).toLocaleString("it-IT")}):${d.errori[0].messaggio}. Il centro riprova da solo.</div>` : "");
 }
 // ---------------------------------------------------------------- la gara giorno per giorno
-const FILTRI_GARA = { oro: ["Oro e miscele", ["oro", "mix"]], profili: ["Profili", ["profilo"]],
+const FILTRI_GARA = { oro: ["Oro e miscele", ["oro", "mix"]], mesi: ["Mesi regolari", ["mesi"]], profili: ["Profili", ["profilo"]],
   video: ["Video e letteratura", ["video", "letteratura"]], tutte: ["Tutte", null] };
 const COLORI_GARA = ["#4cc3ae", "#6aa8ea", "#b49ae0", "#f2655b", "#3fb950", "#e8c15a", "#ff8fb1", "#9fb5ff", "#c6d36b", "#7fd1e8", "#d98cf0", "#f6b26b"];
 const COLORI_CONFRONTO = { oro: "#e2ad55", btc: "#f0a04b", mista: "#8fa1b3" };
@@ -276,9 +307,40 @@ async function aggiorna() {
   try {
     const d = await prendi(`/api/stato?budget=${STATO.budget}`);
     STATO.dati = d; disegnaPrezzi(d.prezzi || {}); disegnaArena(d); disegnaStato(d);
-    if (STATO.vista === "vivo") disegnaGara(d);
-    if (STATO.vista === "vivo") dettaglioVivo();
+    if (STATO.vista === "vivo") { disegnaGara(d); dettaglioVivo(); if (!STATO.biasFatto || Date.now() - STATO.biasFatto > 600000) { STATO.biasFatto = Date.now(); disegnaBias(); } }
+    // lo storico giorno per giorno serve alla colonna «rispetto al passato»: si carica una volta sola
+    if (!TUTTE && d.storico_pronto) storicoTutte().then(() => { if (TUTTE) disegnaArena(STATO.dati); }).catch(() => {});
   } catch (e) { $("#aggiornato").textContent = window.STATICO ? "dati non raggiungibili, riprovo" : "il centro non risponde: è aperto?"; $("#pallino").className = "pallino"; }
+}
+
+// ---------------------------------------------------------------- bias giornaliero di Lil Fish (sulle candele chiuse)
+function biasDi(prec, oggi) {
+  const sopra = oggi[2] > prec[2], sotto = oggi[3] < prec[3], dentro = oggi[4] <= prec[2] && oggi[4] >= prec[3];
+  if (oggi[4] > prec[2]) return [1, "ha chiuso sopra il massimo di ieri"];
+  if (oggi[4] < prec[3]) return [-1, "ha chiuso sotto il minimo di ieri"];
+  if (sopra && !sotto && dentro) return [-1, "è salito sopra il massimo di ieri e ha richiuso dentro"];
+  if (sotto && !sopra && dentro) return [1, "è sceso sotto il minimo di ieri e ha richiuso dentro"];
+  return [0, sopra && sotto ? "è uscito da entrambi i lati e ha richiuso dentro" : "è rimasto dentro il range di ieri"];
+}
+async function disegnaBias() {
+  const righe = [];
+  for (const m of ["BTC_EUR", "ORO_EUR"]) {
+    let c;
+    try { c = await prendi(`/api/candele?mercato=${m}&tf=1d`); } catch (e) { continue; }
+    const chiuse = c.slice(0, -1);              // l'ultima è la giornata in corso
+    if (chiuse.length < 3) continue;
+    let giusti = 0, tot = 0;
+    for (let i = Math.max(2, chiuse.length - 401); i < chiuse.length - 1; i++) {
+      const [b] = biasDi(chiuse[i - 1], chiuse[i]); if (!b) continue;
+      tot++; if (Math.sign(chiuse[i + 1][4] - chiuse[i][4]) === b) giusti++;
+    }
+    const n = chiuse.length, [b, perche] = biasDi(chiuse[n - 2], chiuse[n - 1]);
+    const obiettivo = b > 0 ? chiuse[n - 1][2] : b < 0 ? chiuse[n - 1][3] : null;
+    righe.push(`<tr><td><b>${NOMI[m]}</b></td><td><span class="chip ${b > 0 ? "dentro" : b < 0 ? "short" : "fuori"}">${b > 0 ? "rialzo" : b < 0 ? "ribasso" : "neutro"}</span></td>
+      <td style="font-size:13px">Oggi ${perche}.</td><td class="n">${obiettivo ? eur(obiettivo, 0) : "—"}</td>
+      <td class="n">${tot ? Math.round(giusti / tot * 100) + "% su " + tot : "—"}</td></tr>`);
+  }
+  $("#bias-fish").innerHTML = righe.join("") || '<tr><td colspan="5" class="vuoto">Candele giornaliere in arrivo…</td></tr>';
 }
 
 // ---------------------------------------------------------------- dettaglio dal vivo
@@ -302,11 +364,141 @@ async function dettaglioVivo() {
     const l = v.g.addAreaSeries({ lineColor: "#4cc3ae", topColor: "#4cc3ae44", bottomColor: "#4cc3ae05", lineWidth: 2 });
     l.setData((det.equity || []).map(([t, x]) => ({ time: t, value: x }))); v.serie.push(l); v.g.timeScale().fitContent(); }
   $("#trade-vivo").innerHTML = (det.ordini || []).slice().reverse().map(o => `<tr><td class="num">${quando(o.tempo)}</td><td>${NOMI[o.mercato]}</td>
-    <td class="${azione(o).su ? "su" : "giu"}">${azione(o).testo}</td><td class="n">${eur(o.prezzo, 0)}</td><td class="n">${eur(o.importo_eur)}</td><td class="n">${eur(o.costo_eur)}</td></tr>`).join("")
+    <td class="${azione(o).su ? "su" : "giu"}">${azione(o).testo}</td><td class="n">${o.mercato === "LIQ" ? "—" : eur(o.prezzo, 0)}</td><td class="n">${eur(o.importo_eur)}</td><td class="n">${eur(o.costo_eur)}</td></tr>`).join("")
     || `<tr><td colspan="6" class="vuoto">Nessun trade ancora. ${s.tf === "1d" ? "Le strategie giornaliere decidono una volta al giorno, alle 00:00 UTC: possono passare settimane senza trade." : "Le strategie a 1 ora decidono a ogni ora piena."}</td></tr>`;
 }
 
 // ---------------------------------------------------------------- storico
+// Lo storico di ogni strategia arriva anche giorno per giorno (storico_tutte): da lì la pagina calcola i numeri
+// di qualunque periodo, i mesi, il confronto tra strategie e la «macchina del tempo».
+const GIORNO = 86400;
+const MESI_BREVI = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
+const PERIODI = [["tutto", "Tutto"], ["a5", "Ultimi 5 anni"], ["a3", "Ultimi 3 anni"], ["a1", "Ultimi 12 mesi"],
+  ["m6", "Ultimi 6 mesi"], ["m3", "Ultimi 3 mesi"], ["ytd", "Da inizio anno"]];
+Object.assign(STATO, { periodo: "tutto", dal: null, al: null, ordine: { col: "r", dir: -1 } });
+const isoDi = t => new Date(t * 1000).toISOString().slice(0, 10);
+const tDi = s => Date.parse(s + "T00:00:00Z") / 1000;
+const piuMesi = (ym, n) => { const [a, m] = ym.split("-").map(Number); return new Date(Date.UTC(a, m - 1 + n, 1)).toISOString().slice(0, 7); };
+const fineMese = ym => { const [a, m] = ym.split("-").map(Number); return new Date(Date.UTC(a, m, 0)).toISOString().slice(0, 10); };
+const dataIt = s => s.split("-").reverse().join("/");
+const nomeMese = ym => MESI_BREVI[+ym.slice(5, 7) - 1] + " " + ym.slice(0, 4);
+const pctM = v => (Math.abs(v) < 0.0005 ? "" : v >= 0 ? "+" : "−") + Math.abs(v * 100).toLocaleString("it-IT", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+let TUTTE = null;
+async function storicoTutte() {
+  if (TUTTE) return TUTTE;
+  const x = await prendi("/api/storico_tutte"), s = x.strategie || {};
+  for (const k in s) s[k].t0 = tDi(s[k].dal);
+  if (Object.keys(s).length && x.pronto !== false) TUTTE = s;
+  return s;
+}
+// il periodo scelto come date: gli «ultimi N» contano mesi interi, fino all'ultimo mese finito
+function intervallo(tutte) {
+  const serie = Object.values(tutte); if (!serie.length) return null;
+  const primo = serie.map(x => x.dal).sort()[0];
+  const ultimo = serie.map(x => isoDi(x.t0 + (x.v.length - 1) * GIORNO)).sort().pop();
+  const L = ultimo.slice(0, 7), Lc = fineMese(L) === ultimo ? L : piuMesi(L, -1);
+  const p = STATO.periodo; let dal = primo, al = ultimo;
+  if (/^a\d+$/.test(p)) { dal = piuMesi(Lc, -12 * +p.slice(1) + 1) + "-01"; al = fineMese(Lc); }
+  else if (/^m\d+$/.test(p)) { dal = piuMesi(Lc, -(+p.slice(1)) + 1) + "-01"; al = fineMese(Lc); }
+  else if (p === "ytd") dal = L.slice(0, 4) + "-01-01";
+  else if (/^y\d{4}$/.test(p)) { dal = p.slice(1) + "-01-01"; al = p.slice(1) + "-12-31"; }
+  else if (p === "su misura" && STATO.dal && STATO.al) { dal = STATO.dal + "-01"; al = fineMese(STATO.al); }
+  if (dal < primo) dal = primo; if (al > ultimo) al = ultimo;
+  return { dal, al, primo, ultimo };
+}
+// i numeri di una strategia nel periodo, dal suo valore a fine giornata
+function numeri(x, dal, al) {
+  const n = x.v.length;
+  const i0 = Math.max(0, Math.round((tDi(dal) - x.t0) / GIORNO)), i1 = Math.min(n - 1, Math.round((tDi(al) - x.t0) / GIORNO));
+  if (i1 < i0) return null;
+  const base = i0 === 0 ? x.base : x.v[i0 - 1], fine = x.v[i1];
+  let mx = base, dd = 0, prec = base; const mesi = [];
+  for (let i = i0; i <= i1; i++) {
+    const v = x.v[i]; if (v > mx) mx = v; const c = v / mx - 1; if (c < dd) dd = c;
+    const oggi = new Date((x.t0 + i * GIORNO) * 1000), domani = new Date((x.t0 + (i + 1) * GIORNO) * 1000);
+    if (i === i1 || domani.getUTCMonth() !== oggi.getUTCMonth()) { mesi.push([oggi.toISOString().slice(0, 7), v / prec - 1]); prec = v; }
+  }
+  const giorni = i1 - i0 + 1, r = fine / base - 1;
+  const peggiore = mesi.reduce((a, m) => (a == null || m[1] < a[1] ? m : a), null);
+  const migliore = mesi.reduce((a, m) => (a == null || m[1] > a[1] ? m : a), null);
+  return { i0, i1, dal: isoDi(x.t0 + i0 * GIORNO), al: isoDi(x.t0 + i1 * GIORNO), base, fine, r, giorni,
+    anno: giorni >= 360 ? Math.pow(fine / base, 365 / giorni) - 1 : null, dd, mesi, peggiore, migliore,
+    neg: mesi.filter(m => m[1] < -0.0005).length, pos: mesi.filter(m => m[1] > 0.0005).length };
+}
+// «macchina del tempo» (idea dai reel sulle skill di trading per Claude): tutte le finestre di N giorni dello
+// storico, cioè cosa sarebbe successo partendo in un giorno qualsiasi
+function finestre(x, N, i0 = 0, i1 = x.v.length - 1) {
+  const v = i0 > 0 ? x.v.slice(i0 - 1, i1 + 1) : [x.base, ...x.v.slice(0, i1 + 1)], out = [];
+  for (let i = 0; i + N < v.length; i++) out.push(v[i + N] / v[i] - 1);
+  if (!out.length) return null;
+  out.sort((a, b) => a - b); const q = p => out[Math.min(out.length - 1, Math.floor(p * out.length))];
+  return { n: out.length, perdita: out.filter(r => r < 0).length / out.length, p5: q(0.05), p25: q(0.25), p50: q(0.5), p75: q(0.75), p95: q(0.95) };
+}
+// arena dal vivo: il risultato dalla partenza è nella norma rispetto a tutti i periodi della stessa durata del passato?
+// (idea dal reel di italian_founder: «ogni giorno controllo se una strategia si è allontanata dal suo storico»)
+const CACHE_FIN = {};
+function nellaNorma(id, partenza, r) {
+  const x = TUTTE && TUTTE[id]; if (!x || !partenza) return '<span class="nota">—</span>';
+  const N = Math.max(1, Math.round((Date.now() / 1000 - tDi(partenza)) / GIORNO)), k = id + ":" + N;
+  const f = CACHE_FIN[k] || (CACHE_FIN[k] = finestre(x, N)); if (!f) return '<span class="nota">—</span>';
+  const banda = `<br><span class="piccolo">9 volte su 10 tra ${pct(f.p5, 0)} e ${pct(f.p95, 0)} in ${N} giorni</span>`;
+  if (r < f.p5) return `<span class="chip short">peggio del solito</span>${banda}`;
+  if (r > f.p95) return `<span class="chip dentro">meglio del solito</span>${banda}`;
+  return `<span class="chip fuori">nella norma</span>${banda}`;
+}
+function coloreMese(r) {
+  if (r == null) return "";
+  if (Math.abs(r) < 0.0005) return "color:var(--tenue)";
+  const a = Math.min(0.7, 0.14 + Math.abs(r) * 5).toFixed(2);
+  return r > 0 ? `background:rgba(63,185,80,${a})` : `background:rgba(242,101,91,${a})`;
+}
+function disegnaPeriodi(I) {
+  const anni = []; for (let a = +I.ultimo.slice(0, 4); a >= +I.primo.slice(0, 4); a--) anni.push(a);
+  $("#periodi").innerHTML = PERIODI.map(([k, t]) => `<button data-p="${k}" class="${STATO.periodo === k ? "on" : ""}">${t}</button>`).join("")
+    + anni.map(a => `<button data-p="y${a}" class="${STATO.periodo === "y" + a ? "on" : ""}">${a}</button>`).join("");
+  document.querySelectorAll("#periodi button").forEach(b => b.onclick = () => { STATO.periodo = b.dataset.p; vistaStorico(); });
+  const mesi = []; for (let m = I.primo.slice(0, 7); m <= I.ultimo.slice(0, 7); m = piuMesi(m, 1)) mesi.push(m);
+  const opz = sel => mesi.map(m => `<option value="${m}" ${m === sel ? "selected" : ""}>${nomeMese(m)}</option>`).join("");
+  $("#dal").innerHTML = opz(I.dal.slice(0, 7)); $("#al").innerHTML = opz(I.al.slice(0, 7));
+  const suMisura = () => { STATO.periodo = "su misura"; STATO.dal = $("#dal").value; STATO.al = $("#al").value;
+    if (STATO.al < STATO.dal) [STATO.dal, STATO.al] = [STATO.al, STATO.dal]; vistaStorico(); };
+  $("#dal").onchange = suMisura; $("#al").onchange = suMisura;
+  // sul telefono la fila scorre di lato: riporta in vista il bottone scelto
+  for (const sel of ["#periodi button.on", "#scelta-storico button.on"]) {
+    const b = $(sel), fila = b && b.parentElement;
+    if (b && fila.scrollWidth > fila.clientWidth) fila.scrollLeft = b.offsetLeft - fila.offsetLeft - 16;
+  }
+}
+function disegnaMesi(nm) {
+  const perAnno = {}; nm.mesi.forEach(([ym, r]) => { (perAnno[ym.slice(0, 4)] ||= {})[+ym.slice(5, 7)] = r; });
+  $("#mesi-testa").innerHTML = `<th>Anno</th>${MESI_BREVI.map(m => `<th>${m}</th>`).join("")}<th>Anno</th>`;
+  $("#mesi").innerHTML = Object.keys(perAnno).sort().reverse().map(a => {
+    const m = perAnno[a], tot = Object.values(m).reduce((p, r) => p * (1 + r), 1) - 1;
+    return `<tr><td>${a}</td>${MESI_BREVI.map((_, i) => m[i + 1] == null ? "<td></td>" : `<td style="${coloreMese(m[i + 1])}">${pctM(m[i + 1])}</td>`).join("")}
+      <td class="tot" style="${coloreMese(tot)}">${pctM(tot)}</td></tr>`; }).join("");
+}
+const COLONNE = {
+  nome: ["Strategia", x => x.s.nome], r: ["Nel periodo", x => x.nm.r], anno: ["All'anno", x => x.nm.anno ?? -Infinity],
+  dd: ["Calo peggiore", x => x.nm.dd], pos: ["Mesi positivi", x => x.nm.pos / Math.max(1, x.nm.mesi.length)],
+  neg: ["Mesi in perdita", x => -x.nm.neg / Math.max(1, x.nm.mesi.length)],
+  peg: ["Mese peggiore", x => x.nm.peggiore ? x.nm.peggiore[1] : 0] };
+function disegnaConfronto(tutte, I) {
+  const righe = (STATO.dati?.strategie || []).filter(s => tutte[s.id]).map(s => ({ s, nm: numeri(tutte[s.id], I.dal, I.al) })).filter(x => x.nm);
+  const { col, dir } = STATO.ordine, chiave = COLONNE[col][1];
+  righe.sort((a, b) => { const x = chiave(a), y = chiave(b); return (typeof x === "string" ? x.localeCompare(y) : x - y) * dir; });
+  const testa = Object.entries(COLONNE).map(([k, [t]]) => `<th class="ordina ${k === "nome" ? "" : "n"} ${k === col ? "on" : ""}" data-c="${k}">${t}${k === col ? (dir < 0 ? " ▾" : " ▴") : ""}</th>`).join("");
+  $("#tab-confronto").innerHTML = `<thead><tr>${testa}</tr></thead><tbody>` + righe.map(({ s, nm }) => {
+    const tardi = nm.dal > I.dal ? `<br><span class="piccolo">dati dal ${dataIt(nm.dal)}</span>` : "";
+    return `<tr class="clic ${s.id === STATO.selStorico ? "sel" : ""}" data-id="${s.id}" tabindex="0"><td><b>${s.nome}</b> <span class="chip ${s.gruppo}">${GRUPPI[s.gruppo]}</span>${tardi}</td>
+      <td class="n ${nm.r >= 0 ? "su" : "giu"}">${pct(nm.r)}</td><td class="n">${nm.anno == null ? "—" : pct(nm.anno)}</td>
+      <td class="n giu">${pct(nm.dd, 0)}</td><td class="n">${Math.round(nm.pos / Math.max(1, nm.mesi.length) * 100)}%</td><td class="n">${nm.neg} su ${nm.mesi.length}</td>
+      <td class="n ${nm.peggiore && nm.peggiore[1] < 0 ? "giu" : ""}">${nm.peggiore ? pct(nm.peggiore[1]) : "—"}</td></tr>`; }).join("") + "</tbody>";
+  document.querySelectorAll("#tab-confronto th.ordina").forEach(th => th.onclick = () => {
+    const c = th.dataset.c; STATO.ordine = { col: c, dir: STATO.ordine.col === c ? -STATO.ordine.dir : (c === "nome" ? 1 : -1) }; disegnaConfronto(tutte, I); });
+  document.querySelectorAll("#tab-confronto tr.clic").forEach(tr => { const scegli = () => { STATO.selStorico = tr.dataset.id; vistaStorico(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+    tr.onclick = scegli; tr.onkeydown = e => { if (e.key === "Enter") scegli(); }; });
+  $("#sotto-confronto").textContent = `Dal ${dataIt(I.dal)} al ${dataIt(I.al)}, commissioni comprese. Un mese «in perdita» chiude sotto −0,05%. Tocca il titolo di una colonna per ordinare, una riga per vederla qui sopra.`;
+}
 async function vistaStorico() {
   const strat = STATO.dati?.strategie || [];
   $("#scelta-storico").innerHTML = strat.map(s => `<button data-id="${s.id}" class="${s.id === STATO.selStorico ? "on" : ""}">${s.nome}</button>`).join("");
@@ -314,36 +506,56 @@ async function vistaStorico() {
   const s = strat.find(x => x.id === STATO.selStorico); if (!s) return;
   // linea grigia di confronto: l'oro tenuto per le strategie solo sull'oro, bitcoin tenuto per le altre
   const rif = s.mercati.length === 1 && s.mercati[0] === "ORO_EUR" ? "oro" : "btc";
-  const [st, bh] = await Promise.all([prendi(`/api/storico?id=${s.id}`), prendi(`/api/storico?id=${rif}`)]);
-  if (!st.metriche) { $("#kpi-storico").innerHTML = '<p class="vuoto">Sto calcolando lo storico (circa un minuto dopo l\'avvio)…</p>'; return; }
-  const k = STATO.budget / 100, m = st.metriche, fine = st.equity.length ? st.equity[st.equity.length - 1][1] * k : null;
-  $("#kpi-storico").innerHTML = `<div><span>${eur(STATO.budget, 0)} dal ${st.inizio.split("-").reverse().join("/")} sarebbero diventati</span><b>${eur(fine, 0)}</b></div>
-    <div><span>Rendimento all'anno</span><b class="${m.rendimento_annuo >= 0 ? "su" : "giu"}">${pct(m.rendimento_annuo)}</b></div>
-    <div><span>Calo peggiore dal massimo</span><b class="giu">${pct(-m.calo_massimo, 0)}</b></div>
-    <div><span>Sharpe (sopra 1 è buono)</span><b>${m.sharpe.toFixed(2).replace(".", ",")}</b></div>
-    <div><span>Trade chiusi · vinti</span><b>${m.giri_chiusi ?? 0} · ${m.quota_vinti == null ? "—" : Math.round(m.quota_vinti * 100) + "%"}</b></div>
-    <div><span>Costi pagati</span><b>${eur(m.costi_eur * k, 0)}</b></div>`;
-  const g = grafico("g-storico", { rightPriceScale: { mode: CHART_OK ? LightweightCharts.PriceScaleMode.Logarithmic : 0, borderColor: "#26384a" } });
+  let st, bh, tutte;
+  try { [st, bh, tutte] = await Promise.all([prendi(`/api/storico?id=${s.id}`), prendi(`/api/storico?id=${rif}`), storicoTutte()]); }
+  catch (e) { $("#kpi-storico").innerHTML = '<p class="vuoto">Storico non raggiungibile, riprovo al prossimo aggiornamento.</p>'; return; }
+  if (!st.metriche || !tutte[s.id]) { $("#kpi-storico").innerHTML = '<p class="vuoto">Sto calcolando lo storico (circa un minuto dopo l\'avvio)…</p>'; return; }
+  const I = intervallo(tutte); disegnaPeriodi(I);
+  const x = tutte[s.id], nm = numeri(x, I.dal, I.al);
+  if (!nm) { $("#kpi-storico").innerHTML = '<p class="vuoto">Questa strategia non ha dati nel periodo scelto.</p>'; disegnaConfronto(tutte, I); return; }
+  const k = STATO.budget / 100, m = st.metriche, fin = finestre(x, 90, nm.i0, nm.i1);
+  $("#sotto-periodo").textContent = `Dal ${dataIt(nm.dal)} al ${dataIt(nm.al)}: ${nm.giorni.toLocaleString("it-IT")} giorni, ${nm.mesi.length} mesi.`
+    + (nm.dal > I.dal ? ` Questa strategia ha dati solo dal ${dataIt(nm.dal)}.` : "");
+  $("#kpi-storico").innerHTML = `<div><span>${eur(STATO.budget, 0)} il ${dataIt(nm.dal)} sarebbero diventati</span><b>${eur(STATO.budget * (1 + nm.r), 0)}</b></div>
+    <div><span>Rendimento nel periodo</span><b class="${nm.r >= 0 ? "su" : "giu"}">${pct(nm.r)}</b></div>
+    <div><span>All'anno</span><b class="${(nm.anno ?? 0) >= 0 ? "su" : "giu"}">${nm.anno == null ? "—" : pct(nm.anno)}${nm.anno == null ? "<small>serve almeno un anno</small>" : ""}</b></div>
+    <div><span>Calo peggiore dal massimo</span><b class="giu">${pct(nm.dd, 0)}</b></div>
+    <div><span>Mesi in perdita</span><b>${nm.neg} su ${nm.mesi.length}<small>${nm.pos} in guadagno, ${nm.mesi.length - nm.neg - nm.pos} in pari</small></b></div>
+    <div><span>Mese peggiore</span><b class="${nm.peggiore[1] < 0 ? "giu" : ""}">${pct(nm.peggiore[1])}<small>${nomeMese(nm.peggiore[0])}</small></b></div>
+    <div><span>Mese migliore</span><b class="${nm.migliore[1] > 0 ? "su" : ""}">${pct(nm.migliore[1])}<small>${nomeMese(nm.migliore[0])}</small></b></div>
+    <div><span>Dopo 90 giorni, partendo un giorno qualsiasi</span><b>${fin ? `${Math.round(fin.perdita * 100)}%` : "—"}<small>${fin ? `delle volte in perdita; metà delle volte tra ${pct(fin.p25, 0)} e ${pct(fin.p75, 0)}, 9 su 10 tra ${pct(fin.p5, 0)} e ${pct(fin.p95, 0)}` : "periodo più corto di 90 giorni"}</small></b></div>
+    <div><span>Trade chiusi · vinti (tutto lo storico)</span><b>${m.giri_chiusi ?? 0} · ${m.quota_vinti == null ? "—" : Math.round(m.quota_vinti * 100) + "%"}</b></div>`;
+  // valore del conto nel periodo, ripartendo dal budget scelto (settimana per settimana)
+  const t0 = tDi(nm.dal), t1 = tDi(nm.al) + GIORNO, scala = STATO.budget / nm.base;
+  const punti = [[t0, nm.base], ...st.equity.filter(([t]) => t > t0 && t < t1)];
+  if (punti[punti.length - 1][0] < tDi(nm.al)) punti.push([tDi(nm.al), nm.fine]);
+  const g = grafico("g-storico");
   if (g) { svuota(g);
-    if (s.id !== rif && bh.equity && s.tf === "1d") { const b = g.g.addLineSeries({ color: "#5d6b79", lineWidth: 1 }); b.setData(bh.equity.map(([t, x]) => ({ time: t, value: x * k }))); g.serie.push(b); }
-    const l = g.g.addLineSeries({ color: "#4cc3ae", lineWidth: 2 }); l.setData(st.equity.map(([t, x]) => ({ time: t, value: x * k }))); g.serie.push(l); g.g.timeScale().fitContent(); }
+    g.g.applyOptions({ rightPriceScale: { mode: nm.giorni > 730 ? LightweightCharts.PriceScaleMode.Logarithmic : LightweightCharts.PriceScaleMode.Normal } });
+    if (s.id !== rif && bh.equity && s.tf === "1d" && tutte[rif]) { const nb = numeri(tutte[rif], nm.dal, nm.al);
+      if (nb) { const pb = [[t0, nb.base], ...bh.equity.filter(([t]) => t > t0 && t < t1)]; if (pb[pb.length - 1][0] < tDi(nm.al)) pb.push([tDi(nm.al), nb.fine]);
+        const b = g.g.addLineSeries({ color: "#5d6b79", lineWidth: 1, priceLineVisible: false }); b.setData(pb.map(([t, v]) => ({ time: t, value: v * STATO.budget / nb.base }))); g.serie.push(b); } }
+    const l = g.g.addLineSeries({ color: "#4cc3ae", lineWidth: 2 }); l.setData(punti.map(([t, v]) => ({ time: t, value: v * scala }))); g.serie.push(l); g.g.timeScale().fitContent(); }
+  $("#sotto-storico").textContent = (nm.giorni > 730 ? "Scala logaritmica: ogni raddoppio occupa lo stesso spazio. " : "")
+    + (s.id !== rif && s.tf === "1d" ? `In grigio, ${rif === "oro" ? "l'oro" : "bitcoin"} comprato e tenuto nello stesso periodo.` : "");
   const gc = grafico("g-calo"); if (gc) { svuota(gc); let mx = -Infinity;
     const a = gc.g.addAreaSeries({ lineColor: "#f2655b", topColor: "#f2655b10", bottomColor: "#f2655b55", lineWidth: 1, priceFormat: { type: "custom", formatter: v => v.toFixed(0) + "%" } });
-    a.setData(st.equity.map(([t, x]) => { mx = Math.max(mx, x); return { time: t, value: (x / mx - 1) * 100 }; })); gc.serie.push(a); gc.g.timeScale().fitContent(); }
-  const anni = Object.keys(st.anni);
-  $("#anni-testa").innerHTML = anni.map(a => `<th class="n">${a}</th>`).join("");
-  $("#anni").innerHTML = `<tr>${anni.map(a => `<td class="n ${st.anni[a] >= 0 ? "su" : "giu"}">${pct(st.anni[a], 0)}</td>`).join("")}</tr>`;
-  $("#trade-storico").innerHTML = st.ordini.slice().reverse().map(o => `<tr><td class="num">${quando(o.tempo, s.tf === "1h")}</td><td>${NOMI[o.mercato]}</td>
-    <td class="${azione(o).su ? "su" : "giu"}">${azione(o).testo}</td><td class="n">${eur(o.prezzo, 0)}</td><td class="n">${eur(o.importo_eur * k)}</td></tr>`).join("");
+    a.setData(punti.map(([t, v]) => { mx = Math.max(mx, v); return { time: t, value: (v / mx - 1) * 100 }; })); gc.serie.push(a); gc.g.timeScale().fitContent(); }
+  disegnaMesi(nm);
+  disegnaConfronto(tutte, I);
+  const ordini = st.ordini.filter(o => o.tempo >= t0 && o.tempo < t1);
+  $("#trade-storico").innerHTML = ordini.slice().reverse().map(o => `<tr><td class="num">${quando(o.tempo, s.tf === "1h")}</td><td>${NOMI[o.mercato]}</td>
+    <td class="${azione(o).su ? "su" : "giu"}">${azione(o).testo}</td><td class="n">${o.mercato === "LIQ" ? "—" : eur(o.prezzo, 0)}</td><td class="n">${eur(o.importo_eur * k)}</td></tr>`).join("")
+    || '<tr><td colspan="5" class="vuoto">Nessun trade nel periodo scelto.</td></tr>';
   const mercato = s.mercati[0];
-  const cand = s.tf === "1d" ? await prendi(`/api/candele_storiche?mercato=${mercato}`) : [];
+  const cand = s.tf === "1d" ? await prendi(`/api/candele_storiche?mercato=${mercato}`).catch(() => []) : [];
   const p = grafico("g-prezzo-storico"); if (p) { svuota(p);
     if (cand.length) { const c = p.g.addCandlestickSeries({ upColor: "#3fb950", downColor: "#f2655b", borderVisible: false, wickUpColor: "#3fb950", wickDownColor: "#f2655b" });
       c.setData(cand.map(r => ({ time: r[0], open: r[1], high: r[2], low: r[3], close: r[4] })));
       c.setMarkers(st.ordini.filter(o => o.mercato === mercato && (o.peso_prima < 0.01 || o.peso_dopo < 0.01)).map(o => ({ time: o.tempo, position: o.lato === "compra" ? "belowBar" : "aboveBar",
         color: o.lato === "compra" ? "#3fb950" : "#f2655b", shape: o.lato === "compra" ? "arrowUp" : "arrowDown" })));
-      p.serie.push(c); p.g.timeScale().fitContent(); }
-    else { $("#g-prezzo-storico").insertAdjacentHTML("afterbegin", ""); } }
+      p.serie.push(c);
+      try { p.g.timeScale().setVisibleRange({ from: t0, to: tDi(nm.al) }); } catch (e) { p.g.timeScale().fitContent(); } } }
 }
 
 // ---------------------------------------------------------------- budget, migliorie, video

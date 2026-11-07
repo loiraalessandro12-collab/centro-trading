@@ -58,8 +58,9 @@ def main():
         scrivi(dati, f"stato_{b}.json", SV.riassunto(b))
         for s in SV.A.STRATEGIE:
             scrivi(dati, f"arena_{s['id']}_{b}.json", SV.S.arena.get(b, {}).get(s["id"], {}))
-    for s in SV.A.STRATEGIE:
-        scrivi(dati, f"storico_{s['id']}.json", SV.S.storico.get(s["id"], {}))
+    for s in SV.A.STRATEGIE:   # i valori giorno per giorno vanno tutti insieme in storico_tutte.json
+        scrivi(dati, f"storico_{s['id']}.json", {k: v for k, v in (SV.S.storico.get(s["id"]) or {}).items() if k != "giorni"})
+    scrivi(dati, "storico_tutte.json", SV.storico_tutte())
     for tf in ("1h", "1d"):
         for m in SV.A.MERCATI:
             df = SV.S.chiusi[tf].get(m)

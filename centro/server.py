@@ -120,7 +120,42 @@ def aggiorna_candele(ex) -> None:
                 S.chiusi[tf][m] = tutto
                 S.correnti[tf][m] = corrente
             time.sleep(0.6)
+    aggiorna_liquidita()
     S.agg_candele = _ora_iso()
+
+
+_TASSI = {"giorno": None, "tassi": None}
+
+
+def tassi_estr() -> list:
+    """€STR (tasso interbancario overnight dell'euro): lo storico è nel file del centro, gli ultimi giorni arrivano
+    dall'API pubblica della BCE una volta al giorno; se non risponde si tiene l'ultimo valore noto."""
+    oggi = _ora_utc().date()
+    if _TASSI["giorno"] == oggi and _TASSI["tassi"]:
+        return _TASSI["tassi"]
+    tassi = json.load(open(os.path.join(QUI, "estr.json"), encoding="utf-8"))["tassi"]
+    try:
+        import csv
+        import io
+        import urllib.request
+        url = "https://data-api.ecb.europa.eu/service/data/EST/B.EU000A2X2A25.WT?lastNObservations=40&format=csvdata"
+        req = urllib.request.Request(url, headers={"User-Agent": "centro-trading (soldi finti)"})
+        testo = urllib.request.urlopen(req, timeout=20).read().decode("utf-8")
+        ultimo = tassi[-1][0]
+        for r in csv.DictReader(io.StringIO(testo)):
+            if r.get("TIME_PERIOD", "") > ultimo and r.get("OBS_VALUE"):
+                tassi.append([r["TIME_PERIOD"], float(r["OBS_VALUE"])])
+    except Exception as e:  # noqa: BLE001
+        S.errore(f"€STR dalla BCE non raggiungibile, uso l'ultimo noto: {type(e).__name__}")
+    _TASSI.update(giorno=oggi, tassi=tassi)
+    return tassi
+
+
+def aggiorna_liquidita() -> None:
+    liq = A.candele_liquidita(tassi_estr())
+    with S.lock:
+        S.chiusi["1d"]["LIQ"] = liq
+        S.correnti["1d"]["LIQ"] = None
 
 
 def aggiorna_monete(ex) -> None:
@@ -216,6 +251,7 @@ def calcola_storico() -> None:
     try:
         from torneo.gara import carica_giornalieri, leggi
         d = carica_giornalieri()
+        d["LIQ"] = A.candele_liquidita(tassi_estr())
         orari = {"BTC_EUR": leggi(os.path.join(RADICE, "dati", "BTC-EUR_1h.csv"))}
         for s in A.STRATEGIE:
             try:
@@ -304,6 +340,18 @@ def riassunto(budget: int) -> dict:
                               for s in A.STRATEGIE]}
 
 
+def storico_tutte() -> dict:
+    """Il valore giorno per giorno dello storico di tutte le strategie, in un solo file leggero: la pagina ci
+    calcola rendimento, calo e mesi per qualunque periodo scelto, e il confronto tra le strategie."""
+    with S.lock:
+        out = {}
+        for s in A.STRATEGIE:
+            r = S.storico.get(s["id"]) or {}
+            if r.get("giorni"):
+                out[s["id"]] = {"inizio": r.get("inizio"), **r["giorni"]}
+        return {"strategie": out, "pronto": S.pronto_storico}
+
+
 def leggi_json(*parti):
     p = os.path.join(RADICE, *parti)
     return json.load(open(p, encoding="utf-8")) if os.path.exists(p) else None
@@ -338,6 +386,8 @@ class Gestore(BaseHTTPRequestHandler):
                 with S.lock:
                     r = S.storico.get(q.get("id", ""))
                 self._json(r or {"in_calcolo": not S.pronto_storico}, 200)
+            elif u.path == "/api/storico_tutte":
+                self._json(storico_tutte())
             elif u.path == "/api/candele":
                 m, tf = q.get("mercato", "BTC_EUR"), q.get("tf", "1h")
                 with S.lock:
