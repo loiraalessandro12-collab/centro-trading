@@ -53,6 +53,12 @@ jobs:
           path: sito
       - id: pagina
         uses: actions/deploy-pages@v4
+        continue-on-error: true       # a volte GitHub non trova il pacchetto appena caricato: si riprova
+      - if: steps.pagina.outcome == 'failure'
+        run: sleep 30
+      - id: pagina2
+        if: steps.pagina.outcome == 'failure'
+        uses: actions/deploy-pages@v4
 
   prossimo:
     needs: aggiorna

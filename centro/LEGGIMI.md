@@ -16,6 +16,13 @@ Il centro gira in due posti, con lo stesso codice e gli stessi conti:
   trading» ridotta a icona; se si blocca riparte da solo dopo 30 secondi). Pagina: `http://127.0.0.1:8787`,
   prezzi ogni minuto. Per toglierlo: Win+R → `shell:startup` → cancella «Centro di controllo trading».
 
+## La prova di 90 giorni (decisa il 2026-11-07)
+
+Tutte le strategie girano con soldi finti dal 4 novembre 2026 per 90 giorni, fino al 1° febbraio 2027
+compreso: giorni che nessuna regola conosceva quando è stata scritta. La pagina mostra «giorno N di 90»
+e il grafico «La gara giorno per giorno». Le 7 strategie sull'oro e le miscele oro + bitcoin vengono dai
+tornei dell'oro (`torneo\oro.py`, `torneo\oro2.py`) e usano solo dati fino al 30 ottobre 2026.
+
 ## Come si apre a mano
 
 **Doppio clic su `avvia_centro.bat`.** Si apre una finestra nera (il «server») e poi il browser su

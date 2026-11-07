@@ -21,6 +21,7 @@ sys.path.insert(0, RADICE)
 
 from bot_definitivo import ricette as R  # noqa: E402
 from torneo import strategie as ST  # noqa: E402
+from torneo import strategie_oro as SO  # noqa: E402
 from torneo.motore import Costi, simula  # noqa: E402
 
 MERCATI = {"BTC_EUR": "BTC/EUR", "ETH_EUR": "ETH/EUR", "SOL_EUR": "SOL/EUR", "ORO_EUR": "PAXG/EUR"}
@@ -35,9 +36,20 @@ COMMISSIONE = 0.004
 SLITTAMENTO = {"BTC_EUR": 0.0005, "ETH_EUR": 0.0005, "SOL_EUR": 0.001, "ORO_EUR": 0.0015}
 
 
+# oro con un CFD (long e short): spread e slittamento 0,012% per lato; finanziamento notturno long 6% e
+# short 1% all'anno (torneo dell'oro del 2026-11-06, ricerca/oro_mercato_2026-11.md)
+COSTI_CFD_ORO = {"ORO_EUR": Costi(commissione=0.0, slittamento=0.00012, fin_long_annuo=0.06, fin_short_annuo=0.01)}
+
+
 def costi(mercati) -> dict:
     return {m: Costi(commissione=COMMISSIONE, slittamento=SLITTAMENTO.get(m, 0.001), minimo_ordine_eur=5.0)
             for m in mercati}
+
+
+def _mix(btc: pd.Series, oro: pd.Series) -> pd.DataFrame:
+    """Due pezzi su calendari che possono differire di qualche giorno: li mette sulle stesse date."""
+    idx = btc.index.union(oro.index)
+    return pd.DataFrame({"BTC_EUR": btc.reindex(idx).ffill().fillna(0.0), "ORO_EUR": oro.reindex(idx).ffill().fillna(0.0)})
 
 
 def _s(id_, nome, gruppo, tf, mercati, f, origine, descrizione):
@@ -86,6 +98,41 @@ STRATEGIE = [
        "Si compra il primo giorno e si tiene."),
     _s("mista", "Metà bitcoin e metà oro, tenuti", "confronto", "1d", ["BTC_EUR", "ORO_EUR"], R.meta_btc_meta_oro,
        "Confronto", "Metà e metà, si ribilancia solo oltre 5 punti."),
+    # --- tornei dell'oro (2026-11-06 e 2026-11-07): regole fissate con dati fino al 30/10/2026, prima della
+    # partenza, così i 90 giorni della prova dal vivo restano sconosciuti a tutte
+    _s("oro", "Oro comprato e tenuto", "confronto", "1d", ["ORO_EUR"], lambda d: ST.compra_e_tieni(d, "ORO_EUR"),
+       "Confronto", "Si compra il token PAXG il primo giorno e si tiene. Nei tornei dell'oro ha battuto tutte le regole sul guadagno."),
+    _s("oro_dosato", "Oro dosato sull'oscillazione", "oro", "1d", ["ORO_EUR"],
+       lambda d: ST.solo_volatilita(d, "ORO_EUR", vol_obiettivo=0.10, giorni_vol=60), "Torneo dell'oro 2 (2026-11-07)",
+       "Sempre long sull'oro (PAXG), con meno soldi quando l'oro è agitato: punta a un'oscillazione del 10% "
+       "all'anno. Nel torneo il miglior rapporto fra guadagno e rischio solo sull'oro."),
+    _s("oro_nucleo", "Oro 70% tenuto + 30% tattica", "oro", "1d", ["ORO_EUR"],
+       lambda d: SO.nucleo_e_tattica(d, "ORO_EUR", nucleo=0.7), "Torneo dell'oro 2 (2026-11-07)",
+       "Il 70% sta sempre sull'oro (PAXG); il resto segue il voto di 5 regole di tendenza classiche. "
+       "Va da 40% a 100% d'oro: mai short."),
+    {**_s("oro_voto", "Oro long e short · voto di 5 regole", "oro", "1d", ["ORO_EUR"],
+          lambda d: ST.con_volatilita(SO.voto(d, "ORO_EUR"), d, obiettivo=0.10, tetto=1.0), "Torneo dell'oro 2 (2026-11-07)",
+          "Media dei voti di 5 regole di tendenza classiche (media 200 giorni di borsa, incrocio 50/200, Turtle 55/20, "
+          "momentum 12 mesi, canale gaussiano), dosata sull'oscillazione. Short quando vincono i ribassi. CFD: "
+          "finanziamento 6% all'anno da long, 1% da short."),
+     "costi": COSTI_CFD_ORO},
+    {**_s("oro_completa", "Oro long e short completa · canale + stop", "oro", "1d", ["ORO_EUR"],
+          lambda d: ST.con_volatilita(SO.con_stop(SO.ls_gaussiano(d, "ORO_EUR", periodo=144, molt=1.414), d, "ORO_EUR", k=3.0),
+                                      d, obiettivo=0.10, tetto=1.0), "Torneo dell'oro 2 (2026-11-07)",
+          "Canale gaussiano nei due sensi, con uno stop che segue il prezzo (si esce se torna indietro di 3 volte "
+          "l'escursione media di un giorno) e quantità dosata sull'oscillazione. CFD."),
+     "costi": COSTI_CFD_ORO},
+    _s("mix_oro", "Metà tendenza su bitcoin + metà oro con tattica", "mix", "1d", ["BTC_EUR", "ORO_EUR"],
+       lambda d: _mix(0.5 * R.tendenza_btc(d)["BTC_EUR"], 0.5 * SO.nucleo_e_tattica(d, "ORO_EUR", nucleo=0.5)["ORO_EUR"]),
+       "Torneo dell'oro 2 (2026-11-07)",
+       "Metà del capitale segue il profilo 1 su bitcoin; l'altra metà sta sull'oro (PAXG), dal 50 al 100% secondo "
+       "il voto di 5 regole. Nel torneo +25% all'anno dal 2018 con calo massimo del 16%."),
+    {**_s("mix_voto", "Metà tendenza su bitcoin + metà oro long e short", "mix", "1d", ["BTC_EUR", "ORO_EUR"],
+          lambda d: _mix(0.5 * R.tendenza_btc(d)["BTC_EUR"], 0.5 * SO.voto(d, "ORO_EUR")["ORO_EUR"]),
+          "Torneo dell'oro 2 (2026-11-07)",
+          "Metà segue il profilo 1 su bitcoin; l'altra metà va long o short sull'oro con il voto di 5 regole (CFD). "
+          "Serve a vedere dal vivo se lo short sull'oro aiuta dentro una miscela."),
+     "costi": {**costi(["BTC_EUR"]), **COSTI_CFD_ORO}},
 ]
 PER_ID = {s["id"]: s for s in STRATEGIE}
 
@@ -109,15 +156,18 @@ def _metriche(eq: pd.Series, anni_per_candela: float) -> dict:
 
 
 def _operazioni(reg: list) -> dict:
-    """Riassume gli ordini in 'giri' chiusi (da entrata a uscita) per mercato: quanti, quanti vinti."""
+    """Riassume gli ordini in 'giri' chiusi (da entrata a uscita) per mercato, long e short: quanti, quanti
+    vinti. Uno short guadagna se il prezzo d'uscita è più basso di quello d'entrata."""
     giri, aperti = [], {}
     for o in reg:
-        m = o["mercato"]
-        if o["lato"] == "compra" and o["peso_prima"] <= 1e-9:
-            aperti[m] = o
-        elif o["lato"] == "vendi" and o["peso_dopo"] <= 1e-9 and m in aperti:
+        m, prima, dopo = o["mercato"], o["peso_prima"], o["peso_dopo"]
+        gira = abs(prima) > 1e-9 and abs(dopo) > 1e-9 and (prima > 0) != (dopo > 0)
+        if m in aperti and (abs(dopo) <= 1e-9 or gira):
             e = aperti.pop(m)
-            giri.append(o["prezzo"] / e["prezzo"] - 1)
+            verso = 1.0 if e["peso_dopo"] > 0 else -1.0
+            giri.append(verso * (o["prezzo"] / e["prezzo"] - 1))
+        if abs(dopo) > 1e-9 and (abs(prima) <= 1e-9 or gira):
+            aperti[m] = o
     vinti = [g for g in giri if g > 0]
     return {"giri_chiusi": len(giri), "quota_vinti": (len(vinti) / len(giri)) if giri else None}
 

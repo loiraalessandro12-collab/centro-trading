@@ -1,6 +1,8 @@
 # Centro di controllo · trading con soldi finti
 
-Una gara fra 16 strategie di trading con **soldi virtuali**, partita il 4 novembre 2026.
+Una gara fra 23 strategie di trading con **soldi virtuali**, partita il 4 novembre 2026: la prova dura
+90 giorni, fino al 1° febbraio 2027. Dal 7 novembre ci sono anche strategie solo sull'oro (long e short)
+e miscele di oro e bitcoin, con regole fissate prima della partenza.
 Ogni mezz'ora GitHub prende i prezzi pubblici di Kraken, rifà i conti e aggiorna la pagina:
 
 **https://loiraalessandro12-collab.github.io/centro-trading/**

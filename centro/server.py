@@ -267,6 +267,15 @@ def _num(x):
     return x
 
 
+def _curva_giornaliera(equity: list, capitale: float) -> list:
+    """Il conto di una strategia giorno per giorno (ultimo valore di ogni giorno UTC), come rendimento
+    dalla partenza: serve al grafico «la gara giorno per giorno»."""
+    giorni = {}
+    for t, v in equity or []:
+        giorni[int(t) // 86400 * 86400] = v
+    return [[g, round(v / capitale - 1.0, 4)] for g, v in sorted(giorni.items())]
+
+
 def riassunto(budget: int) -> dict:
     with S.lock:
         arena = S.arena.get(budget, {})
@@ -279,14 +288,14 @@ def riassunto(budget: int) -> dict:
             righe.append({"id": s["id"], "nome": s["nome"], "gruppo": s["gruppo"], "tf": s["tf"], "origine": s["origine"],
                           "descrizione": s["descrizione"], "valore": r["valore"], "rendimento": r["rendimento"],
                           "pesi": r["pesi"], "n_ordini": len(r["ordini"]), "ultimo_ordine": ultimo,
-                          "costi": r.get("costi", 0.0)})
+                          "costi": r.get("costi", 0.0), "curva": _curva_giornaliera(r.get("equity"), float(budget))})
         avvisi = []
         adesso = _ora_utc()
         for tf, limite, nome in (("1d", pd.Timedelta(hours=26), "giornaliere"), ("1h", pd.Timedelta(hours=2), "orarie")):
             df = S.chiusi[tf].get("BTC_EUR")
             if df is not None and len(df) and adesso - (df.index[-1] + DURATA[tf]) > limite:
                 avvisi.append(f"Candele {nome} vecchie: l'ultima chiusa è del {df.index[-1]} (UTC). Le decisioni aspettano dati nuovi.")
-        return {"adesso": _ora_iso(), "partenza": CONFIG["partenza"],
+        return {"adesso": _ora_iso(), "partenza": CONFIG["partenza"], "fine_prova": CONFIG.get("fine_prova"),
                 "prossimo_passo": S.prossimo, "avvisi_dati": avvisi,
                 "budget": budget, "prezzi": S.prezzi, "arena": righe, "errori": S.errori[:5],
                 "aggiornato": {"prezzi": S.agg_prezzi, "candele": S.agg_candele, "arena": S.agg_arena},

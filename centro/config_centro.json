@@ -1,7 +1,8 @@
 {
- "_leggimi": "Centro di controllo (SOLDI FINTI). partenza = primo giorno dell'arena dal vivo; i tempi sono in secondi.",
+ "_leggimi": "Centro di controllo (SOLDI FINTI). partenza = primo giorno dell'arena dal vivo; fine_prova = fine dei 90 giorni di prova decisi da Alessandro il 2026-11-07 (alle 00:00 UTC di quel giorno); i tempi sono in secondi.",
  "porta": 8787,
  "partenza": "2026-11-04",
+ "fine_prova": "2027-02-02",
  "aggiorna_prezzi_s": 60,
  "aggiorna_candele_s": 300
 }

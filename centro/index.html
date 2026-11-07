@@ -54,12 +54,18 @@ tbody tr.sel { background: #173a37; }
 .chip.profilo { color: var(--accento); border-color: #2c6d63; } .chip.video { color: var(--oro); border-color: #6e5428; }
 .chip.confronto { color: var(--tenue); } .chip.letteratura { color: #9fb5ff; border-color: #34426e; }
 .chip.dentro { color: var(--compra); border-color: #2f6b3a; } .chip.fuori { color: var(--tenue); }
+.chip.oro { color: #e8c766; border-color: #7a6a2c; } .chip.mix { color: #ff9f7a; border-color: #7a4a35; } .chip.short { color: var(--vendi, #f2655b); border-color: #7a3530; }
 .grafico { height: 360px; } .grafico.basso { height: 220px; }
 .kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 12px; }
 .kpi div { background: var(--pannello2); border: 1px solid var(--riga); border-radius: 10px; padding: 10px 12px; }
 .kpi span { display: block; font-size: 12px; color: var(--tenue); }
 .kpi b { font: 600 20px/1.2 var(--n); }
 .scelta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.legenda-gara { list-style: none; padding: 0; margin: 10px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 4px 16px; font-size: 13px; }
+.legenda-gara li { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.legenda-gara .seg { flex: 0 0 16px; height: 3px; border-radius: 2px; }
+.legenda-gara .seg.tratt { background-image: linear-gradient(90deg, currentColor 50%, transparent 50%) !important; background-size: 6px 3px; background-color: transparent !important; }
+.legenda-gara b { margin-left: auto; font: 600 13px var(--n); white-space: nowrap; }
 .nota { font-size: 13px; color: var(--tenue); }
 .avviso { border: 1px solid #5a4a1d; background: #2a2412; color: #f0d58a; border-radius: 10px; padding: 8px 12px; font-size: 13px; margin-bottom: 12px; }
 .errore { border-color: #6b2b27; background: #2a1514; color: #ffb4ad; }
@@ -99,6 +105,13 @@ tbody tr.sel { background: #173a37; }
         <tbody id="arena"></tbody>
       </table></div>
     </div>
+    <div class="pannello" style="margin-bottom:14px">
+      <h2>La gara giorno per giorno</h2>
+      <p class="sotto">Quanto ha fatto ogni strategia dalla partenza. I confronti (bitcoin tenuto, oro tenuto, metà e metà) sono tratteggiati.</p>
+      <div class="scelta" id="filtri-gara"></div>
+      <div class="grafico" id="g-gara"></div>
+      <ul class="legenda-gara" id="legenda-gara"></ul>
+    </div>
     <div class="griglia">
       <div class="pannello"><h2 id="titolo-vivo">Grafico</h2><p class="sotto" id="sotto-vivo">Frecce verdi = acquisti, rosse = vendite.</p><p class="avviso" id="prossimo" hidden></p><div class="grafico" id="g-vivo"></div></div>
       <div class="pannello"><h2>Valore del conto</h2><p class="sotto">Dalla partenza dell'arena, segnato al prezzo di adesso.</p><div class="grafico basso" id="g-valore"></div>
@@ -128,12 +141,20 @@ tbody tr.sel { background: #173a37; }
 
 <script>
 const $ = s => document.querySelector(s);
-const STATO = { budget: 100, vista: "vivo", selVivo: "p1", selStorico: "p1", dati: null, info: null, grafici: {} };
+const STATO = { budget: 100, vista: "vivo", selVivo: "p1", selStorico: "p1", dati: null, info: null, grafici: {}, gara: "oro" };
 const eur = (v, d = 2) => v == null ? "—" : v.toLocaleString("it-IT", { minimumFractionDigits: d, maximumFractionDigits: d }) + " €";
 const pct = (v, d = 1) => v == null ? "—" : (v >= 0 ? "+" : "−") + Math.abs(v * 100).toLocaleString("it-IT", { minimumFractionDigits: d, maximumFractionDigits: d }) + "%";
 const quando = (t, conOra = true) => { const d = new Date(t * 1000); return d.toLocaleDateString("it-IT", { day: "2-digit", month: "2-digit", year: "2-digit" }) + (conOra ? " " + d.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }) : ""); };
 const NOMI = new Proxy({ BTC_EUR: "Bitcoin", ETH_EUR: "Ether", SOL_EUR: "Solana", ORO_EUR: "Oro" }, { get: (o, k) => o[k] || String(k).replace("_EUR", "") });
-const GRUPPI = { profilo: "profilo", video: "dai video", letteratura: "letteratura", confronto: "confronto" };
+const GRUPPI = { profilo: "profilo", video: "dai video", letteratura: "letteratura", confronto: "confronto", oro: "solo oro", mix: "oro + bitcoin" };
+// ordini: «vende» che apre uno short e «compra» che lo chiude si chiamano col loro nome
+const SHORT = 0.004;
+function azione(o) {
+  if (o.peso_dopo < -SHORT && o.peso_prima > -SHORT) return { testo: "apre short", su: false };
+  if (o.peso_prima < -SHORT && o.peso_dopo > -SHORT) return { testo: o.peso_dopo > SHORT ? "chiude short e compra" : "chiude short", su: true };
+  if (o.peso_prima < -SHORT && o.peso_dopo < -SHORT) return { testo: o.lato === "compra" ? "riduce lo short" : "aumenta lo short", su: o.lato === "compra" };
+  return { testo: o.lato === "compra" ? "compra" : "vende", su: o.lato === "compra" };
+}
 const CHART_OK = typeof LightweightCharts !== "undefined";
 
 function percorso(url) {
@@ -167,9 +188,11 @@ function disegnaPrezzi(p) {
   }).join("") || '<span class="nota">Prezzi in arrivo da Kraken…</span>';
 }
 function posizione(pesi) {
-  const parti = Object.entries(pesi || {}).filter(([, w]) => w > 0.004).map(([m, w]) => `<span class="chip dentro">${NOMI[m] || m} ${Math.round(w * 100)}%</span>`);
+  const parti = Object.entries(pesi || {}).filter(([, w]) => w > SHORT).map(([m, w]) => `<span class="chip dentro">${NOMI[m] || m} ${Math.round(w * 100)}%</span>`);
+  const corti = Object.entries(pesi || {}).filter(([, w]) => w < -SHORT);
+  corti.forEach(([m, w]) => parti.push(`<span class="chip short">${NOMI[m] || m} short ${Math.round(-w * 100)}%</span>`));
   const cassa = 1 - Object.values(pesi || {}).reduce((a, b) => a + Math.max(b, 0), 0);
-  if (cassa > 0.004) parti.push(`<span class="chip fuori">Euro ${Math.round(cassa * 100)}%</span>`);
+  if (cassa > SHORT && !corti.length) parti.push(`<span class="chip fuori">Euro ${Math.round(cassa * 100)}%</span>`);
   return parti.join("");
 }
 function disegnaArena(d) {
@@ -180,7 +203,7 @@ function disegnaArena(d) {
       <td><b>${r.nome}</b><br><span class="chip ${r.gruppo}">${GRUPPI[r.gruppo]}</span><span class="chip">${r.tf === "1h" ? "1 ora" : "1 giorno"}</span></td>
       <td class="n">${eur(r.valore)}</td><td class="n ${r.rendimento >= 0 ? "su" : "giu"}">${pct(r.rendimento, 2)}</td>
       <td>${posizione(r.pesi)}</td><td class="n">${r.n_ordini}</td>
-      <td class="num" style="font-size:13px">${u ? `${quando(u.tempo)} · <span class="${u.lato === "compra" ? "su" : "giu"}">${u.lato}</span> ${NOMI[u.mercato]} a ${eur(u.prezzo, 0)}` : '<span class="nota">nessuno</span>'}</td></tr>`;
+      <td class="num" style="font-size:13px">${u ? `${quando(u.tempo)} · <span class="${azione(u).su ? "su" : "giu"}">${azione(u).testo}</span> ${NOMI[u.mercato]} a ${eur(u.prezzo, 0)}` : '<span class="nota">nessuno</span>'}</td></tr>`;
   }).join("") || `<tr><td colspan="6" class="vuoto">${d.fase ? `Avvio in corso: ${d.fase}… Le prime strategie compaiono in circa 20 secondi, le altre entro 2 minuti.` : "In attesa dei primi prezzi da Kraken…"}</td></tr>`;
   const tutte = d.strategie || [];
   const mancanti = tutte.filter(s => !righe.some(r => r.id === s.id));
@@ -190,12 +213,43 @@ function disegnaArena(d) {
     tr.onclick = scegli; tr.onkeydown = e => { if (e.key === "Enter") scegli(); }; });
   const n = righe.reduce((a, r) => a + r.n_ordini, 0);
   const migliore = righe[0];
-  $("#kpi-vivo").innerHTML = `<div><span>Partenza dell'arena</span><b>${d.partenza.split("-").reverse().join("/")}</b></div>
+  // prova dal vivo di 90 giorni (decisa il 2026-11-07): giorno N di 90, poi «conclusa»
+  const p0 = new Date(d.partenza + "T00:00:00Z"), fine = d.fine_prova ? new Date(d.fine_prova + "T00:00:00Z") : null;
+  const totale = fine ? Math.round((fine - p0) / 864e5) : 90, giorno = Math.floor((Date.now() - p0) / 864e5) + 1;
+  const quandoFine = fine ? new Date(fine - 864e5).toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" }) : "";
+  const prova = giorno > totale ? "conclusa" : `giorno ${giorno} di ${totale}`;
+  $("#kpi-vivo").innerHTML = `<div><span>Prova dal vivo${fine ? ` (fino al ${quandoFine})` : ""}</span><b>${prova}</b></div>
+    <div><span>Partenza dell'arena</span><b>${d.partenza.split("-").reverse().join("/")}</b></div>
     <div><span>Strategie in gara</span><b>${righe.length}${mancanti.length ? ` di ${tutte.length}` : ""}</b></div><div><span>Trade fatti finora</span><b>${n}</b></div>
     <div><span>In testa adesso</span><b style="font-size:15px">${migliore ? migliore.nome : "—"}</b></div>
     <div><span>Calcolo dell'arena</span><b>${d.secondi_calcolo == null ? "—" : d.secondi_calcolo.toString().replace(".", ",") + " s"}</b></div>`;
   const avvDati = (d.avvisi_dati || []).map(a => `<div class="avviso">${a}</div>`).join("");
   $("#errori").innerHTML = avvDati + ((d.errori || []).length ? `<div class="avviso errore">Ultimo problema (${new Date(d.errori[0].quando).toLocaleString("it-IT")}):${d.errori[0].messaggio}. Il centro riprova da solo.</div>` : "");
+}
+// ---------------------------------------------------------------- la gara giorno per giorno
+const FILTRI_GARA = { oro: ["Oro e miscele", ["oro", "mix"]], profili: ["Profili", ["profilo"]],
+  video: ["Video e letteratura", ["video", "letteratura"]], tutte: ["Tutte", null] };
+const COLORI_GARA = ["#4cc3ae", "#6aa8ea", "#b49ae0", "#f2655b", "#3fb950", "#e8c15a", "#ff8fb1", "#9fb5ff", "#c6d36b", "#7fd1e8", "#d98cf0", "#f6b26b"];
+const COLORI_CONFRONTO = { oro: "#e2ad55", btc: "#f0a04b", mista: "#8fa1b3" };
+function disegnaGara(d) {
+  $("#filtri-gara").innerHTML = Object.entries(FILTRI_GARA).map(([k, [nome]]) => `<button data-g="${k}" class="${k === STATO.gara ? "on" : ""}">${nome}</button>`).join("");
+  document.querySelectorAll("#filtri-gara button").forEach(b => b.onclick = () => { STATO.gara = b.dataset.g; disegnaGara(STATO.dati); });
+  const g = grafico("g-gara", { timeScale: { borderColor: "#26384a", timeVisible: false } }); if (!g) return;
+  svuota(g);
+  const gruppi = FILTRI_GARA[STATO.gara][1];
+  const righe = (d.arena || []).filter(r => (r.curva || []).length && (r.gruppo === "confronto" || !gruppi || gruppi.includes(r.gruppo)))
+    .sort((a, b) => b.rendimento - a.rendimento);
+  let i = 0;
+  const voci = righe.map(r => {
+    const conf = r.gruppo === "confronto", col = conf ? (COLORI_CONFRONTO[r.id] || "#8fa1b3") : COLORI_GARA[i++ % COLORI_GARA.length];
+    const s = g.g.addLineSeries({ color: col, lineWidth: conf ? 1 : 2, lineStyle: conf ? 2 : 0, lastValueVisible: false, priceLineVisible: false,
+      priceFormat: { type: "custom", formatter: v => (v >= 0 ? "+" : "") + v.toFixed(1) + "%" } });
+    s.setData(r.curva.map(([t, v]) => ({ time: t, value: v * 100 })));
+    g.serie.push(s);
+    return `<li><span class="seg${conf ? " tratt" : ""}" style="${conf ? `color:${col}` : `background:${col}`}"></span><span>${r.nome}</span><b class="${r.rendimento >= 0 ? "su" : "giu"}">${pct(r.rendimento)}</b></li>`;
+  });
+  g.g.timeScale().fitContent();
+  $("#legenda-gara").innerHTML = voci.join("");
 }
 function disegnaStato(d) {
   const t = d.aggiornato.prezzi ? new Date(d.aggiornato.prezzi) : null;
@@ -222,6 +276,7 @@ async function aggiorna() {
   try {
     const d = await prendi(`/api/stato?budget=${STATO.budget}`);
     STATO.dati = d; disegnaPrezzi(d.prezzi || {}); disegnaArena(d); disegnaStato(d);
+    if (STATO.vista === "vivo") disegnaGara(d);
     if (STATO.vista === "vivo") dettaglioVivo();
   } catch (e) { $("#aggiornato").textContent = window.STATICO ? "dati non raggiungibili, riprovo" : "il centro non risponde: è aperto?"; $("#pallino").className = "pallino"; }
 }
@@ -241,13 +296,13 @@ async function dettaglioVivo() {
     const c = g.g.addCandlestickSeries({ upColor: "#3fb950", downColor: "#f2655b", borderVisible: false, wickUpColor: "#3fb950", wickDownColor: "#f2655b" });
     c.setData(cand.map(r => ({ time: r[0], open: r[1], high: r[2], low: r[3], close: r[4] })));
     c.setMarkers((det.ordini || []).filter(o => o.mercato === s.mercati[0]).map(o => ({ time: o.tempo, position: o.lato === "compra" ? "belowBar" : "aboveBar",
-      color: o.lato === "compra" ? "#3fb950" : "#f2655b", shape: o.lato === "compra" ? "arrowUp" : "arrowDown", text: o.lato === "compra" ? "compra" : "vende" })));
+      color: o.lato === "compra" ? "#3fb950" : "#f2655b", shape: o.lato === "compra" ? "arrowUp" : "arrowDown", text: azione(o).testo })));
     g.serie.push(c); }
   const v = grafico("g-valore"); if (v) { svuota(v);
     const l = v.g.addAreaSeries({ lineColor: "#4cc3ae", topColor: "#4cc3ae44", bottomColor: "#4cc3ae05", lineWidth: 2 });
     l.setData((det.equity || []).map(([t, x]) => ({ time: t, value: x }))); v.serie.push(l); v.g.timeScale().fitContent(); }
   $("#trade-vivo").innerHTML = (det.ordini || []).slice().reverse().map(o => `<tr><td class="num">${quando(o.tempo)}</td><td>${NOMI[o.mercato]}</td>
-    <td class="${o.lato === "compra" ? "su" : "giu"}">${o.lato}</td><td class="n">${eur(o.prezzo, 0)}</td><td class="n">${eur(o.importo_eur)}</td><td class="n">${eur(o.costo_eur)}</td></tr>`).join("")
+    <td class="${azione(o).su ? "su" : "giu"}">${azione(o).testo}</td><td class="n">${eur(o.prezzo, 0)}</td><td class="n">${eur(o.importo_eur)}</td><td class="n">${eur(o.costo_eur)}</td></tr>`).join("")
     || `<tr><td colspan="6" class="vuoto">Nessun trade ancora. ${s.tf === "1d" ? "Le strategie giornaliere decidono una volta al giorno, alle 00:00 UTC: possono passare settimane senza trade." : "Le strategie a 1 ora decidono a ogni ora piena."}</td></tr>`;
 }
 
@@ -257,7 +312,9 @@ async function vistaStorico() {
   $("#scelta-storico").innerHTML = strat.map(s => `<button data-id="${s.id}" class="${s.id === STATO.selStorico ? "on" : ""}">${s.nome}</button>`).join("");
   document.querySelectorAll("#scelta-storico button").forEach(b => b.onclick = () => { STATO.selStorico = b.dataset.id; vistaStorico(); });
   const s = strat.find(x => x.id === STATO.selStorico); if (!s) return;
-  const [st, bh] = await Promise.all([prendi(`/api/storico?id=${s.id}`), prendi(`/api/storico?id=btc`)]);
+  // linea grigia di confronto: l'oro tenuto per le strategie solo sull'oro, bitcoin tenuto per le altre
+  const rif = s.mercati.length === 1 && s.mercati[0] === "ORO_EUR" ? "oro" : "btc";
+  const [st, bh] = await Promise.all([prendi(`/api/storico?id=${s.id}`), prendi(`/api/storico?id=${rif}`)]);
   if (!st.metriche) { $("#kpi-storico").innerHTML = '<p class="vuoto">Sto calcolando lo storico (circa un minuto dopo l\'avvio)…</p>'; return; }
   const k = STATO.budget / 100, m = st.metriche, fine = st.equity.length ? st.equity[st.equity.length - 1][1] * k : null;
   $("#kpi-storico").innerHTML = `<div><span>${eur(STATO.budget, 0)} dal ${st.inizio.split("-").reverse().join("/")} sarebbero diventati</span><b>${eur(fine, 0)}</b></div>
@@ -265,10 +322,10 @@ async function vistaStorico() {
     <div><span>Calo peggiore dal massimo</span><b class="giu">${pct(-m.calo_massimo, 0)}</b></div>
     <div><span>Sharpe (sopra 1 è buono)</span><b>${m.sharpe.toFixed(2).replace(".", ",")}</b></div>
     <div><span>Trade chiusi · vinti</span><b>${m.giri_chiusi ?? 0} · ${m.quota_vinti == null ? "—" : Math.round(m.quota_vinti * 100) + "%"}</b></div>
-    <div><span>Commissioni pagate</span><b>${eur(m.costi_eur * k, 0)}</b></div>`;
+    <div><span>Costi pagati</span><b>${eur(m.costi_eur * k, 0)}</b></div>`;
   const g = grafico("g-storico", { rightPriceScale: { mode: CHART_OK ? LightweightCharts.PriceScaleMode.Logarithmic : 0, borderColor: "#26384a" } });
   if (g) { svuota(g);
-    if (s.id !== "btc" && bh.equity && s.tf === "1d") { const b = g.g.addLineSeries({ color: "#5d6b79", lineWidth: 1 }); b.setData(bh.equity.map(([t, x]) => ({ time: t, value: x * k }))); g.serie.push(b); }
+    if (s.id !== rif && bh.equity && s.tf === "1d") { const b = g.g.addLineSeries({ color: "#5d6b79", lineWidth: 1 }); b.setData(bh.equity.map(([t, x]) => ({ time: t, value: x * k }))); g.serie.push(b); }
     const l = g.g.addLineSeries({ color: "#4cc3ae", lineWidth: 2 }); l.setData(st.equity.map(([t, x]) => ({ time: t, value: x * k }))); g.serie.push(l); g.g.timeScale().fitContent(); }
   const gc = grafico("g-calo"); if (gc) { svuota(gc); let mx = -Infinity;
     const a = gc.g.addAreaSeries({ lineColor: "#f2655b", topColor: "#f2655b10", bottomColor: "#f2655b55", lineWidth: 1, priceFormat: { type: "custom", formatter: v => v.toFixed(0) + "%" } });
@@ -277,7 +334,7 @@ async function vistaStorico() {
   $("#anni-testa").innerHTML = anni.map(a => `<th class="n">${a}</th>`).join("");
   $("#anni").innerHTML = `<tr>${anni.map(a => `<td class="n ${st.anni[a] >= 0 ? "su" : "giu"}">${pct(st.anni[a], 0)}</td>`).join("")}</tr>`;
   $("#trade-storico").innerHTML = st.ordini.slice().reverse().map(o => `<tr><td class="num">${quando(o.tempo, s.tf === "1h")}</td><td>${NOMI[o.mercato]}</td>
-    <td class="${o.lato === "compra" ? "su" : "giu"}">${o.lato}</td><td class="n">${eur(o.prezzo, 0)}</td><td class="n">${eur(o.importo_eur * k)}</td></tr>`).join("");
+    <td class="${azione(o).su ? "su" : "giu"}">${azione(o).testo}</td><td class="n">${eur(o.prezzo, 0)}</td><td class="n">${eur(o.importo_eur * k)}</td></tr>`).join("");
   const mercato = s.mercati[0];
   const cand = s.tf === "1d" ? await prendi(`/api/candele_storiche?mercato=${mercato}`) : [];
   const p = grafico("g-prezzo-storico"); if (p) { svuota(p);
@@ -319,7 +376,7 @@ document.querySelectorAll("#schede button").forEach(b => b.onclick = () => {
   document.querySelectorAll(".vista").forEach(s => s.hidden = s.id !== "v-" + STATO.vista);
   if (STATO.vista === "storico") vistaStorico(); if (STATO.vista === "budget") vistaBudget();
   if (STATO.vista === "migliorare") vistaMigliorare(); if (STATO.vista === "video") vistaVideo();
-  if (STATO.vista === "vivo") dettaglioVivo(); });
+  if (STATO.vista === "vivo") { dettaglioVivo(); if (STATO.dati) disegnaGara(STATO.dati); } });
 (async () => { try { STATO.info = await prendi("/api/info"); } catch (e) {} 
   // durante l'avvio chiede lo stato ogni 3 secondi (così si vede il progresso), poi ogni 15
   const giro = async () => { await aggiorna(); setTimeout(giro, window.STATICO ? 60000 : (STATO.dati && STATO.dati.fase ? 3000 : 15000)); };
