@@ -96,17 +96,10 @@ STRATEGIE = [
     _s("vecchio", "Doppio filtro (il vecchio bot)", "letteratura", "1d", ["BTC_EUR"],
        lambda d: ST.doppio_filtro(d, "BTC_EUR", n=200, lb=90), "TRADING BOT di giugno",
        "Bitcoin se sopra la media a 200 giorni e più alto di 90 giorni fa."),
-    _s("rsi", "RSI 30/70 + media 200", "video", "1d", ["BTC_EUR"], lambda d: ST.rsi_media200(d, "BTC_EUR"),
-       "Video Zinho Automates", "Compra quando l'RSI risale sopra 30 sopra la media a 200; vende sopra 70."),
-    _s("liquidita", "Presa delle liquidità (ICT)", "video", "1d", ["BTC_EUR"],
-       lambda d: ST.presa_liquidita(d, "BTC_EUR", giorni=3), "Reel ICT / TJR",
-       "Compra quando il prezzo buca il minimo di ieri e richiude sopra; tiene 3 giorni."),
-    _s("emavwap", "EMA 9 + VWAP, candele da 1 ora", "video", "1h", ["BTC_EUR"],
-       lambda d: ST.ema_vwap(d, "BTC_EUR", n_ema=9, solo_long=True), "Reel di Tim Hutter",
-       "Bitcoin quando la media a 9 ore sta sopra il VWAP del giorno."),
-    _s("orb", "Breakout all'apertura di New York, 1 ora", "video", "1h", ["BTC_EUR"],
-       lambda d: ST.breakout_apertura_ny(d, "BTC_EUR", solo_long=True), "Video di Steven Ace / Mamba FX",
-       "Compra se il prezzo supera il massimo della prima ora di New York; chiude alle 16."),
+    # 2026-11-08, decisione di Alessandro («vogliamo solo il meglio delle più redditizie»): tolte dalla gara le 4
+    # strategie dei video che perdono anche sugli anni passati (rsi −5%, liquidita −29%, emavwap −43%, orb −43% l'anno
+    # dal 2018) e le 2 deboli sull'oro long e short (oro_voto +4,8%, oro_completa +3,9%). Il codice resta in
+    # torneo/strategie.py e torneo/strategie_oro.py.
     _s("p5", "Profilo 5 · monete forti", "profilo", "1d", list(MERCATI_ALT), R.monete_forti,
        "Torneo 2 (2026-11-04)", "Ogni domenica le 5 monete più salite in 2 settimane, solo con bitcoin in tendenza. Rischio alto."),
     {**_s("p6", "Profilo 6 · insieme di canali con leva 1,5", "profilo", "1d", ["BTC_EUR"],
@@ -129,18 +122,6 @@ STRATEGIE = [
        lambda d: SO.nucleo_e_tattica(d, "ORO_EUR", nucleo=0.7), "Torneo dell'oro 2 (2026-11-07)",
        "Il 70% sta sempre sull'oro (PAXG); il resto segue il voto di 5 regole di tendenza classiche. "
        "Va da 40% a 100% d'oro: mai short."),
-    {**_s("oro_voto", "Oro long e short · voto di 5 regole", "oro", "1d", ["ORO_EUR"],
-          lambda d: ST.con_volatilita(SO.voto(d, "ORO_EUR"), d, obiettivo=0.10, tetto=1.0), "Torneo dell'oro 2 (2026-11-07)",
-          "Media dei voti di 5 regole di tendenza classiche (media 200 giorni di borsa, incrocio 50/200, Turtle 55/20, "
-          "momentum 12 mesi, canale gaussiano), dosata sull'oscillazione. Short quando vincono i ribassi. CFD: "
-          "finanziamento 6% all'anno da long, 1% da short."),
-     "costi": COSTI_CFD_ORO},
-    {**_s("oro_completa", "Oro long e short completa · canale + stop", "oro", "1d", ["ORO_EUR"],
-          lambda d: ST.con_volatilita(SO.con_stop(SO.ls_gaussiano(d, "ORO_EUR", periodo=144, molt=1.414), d, "ORO_EUR", k=3.0),
-                                      d, obiettivo=0.10, tetto=1.0), "Torneo dell'oro 2 (2026-11-07)",
-          "Canale gaussiano nei due sensi, con uno stop che segue il prezzo (si esce se torna indietro di 3 volte "
-          "l'escursione media di un giorno) e quantità dosata sull'oscillazione. CFD."),
-     "costi": COSTI_CFD_ORO},
     _s("mix_oro", "Metà tendenza su bitcoin + metà oro con tattica", "mix", "1d", ["BTC_EUR", "ORO_EUR"],
        lambda d: _mix(0.5 * R.tendenza_btc(d)["BTC_EUR"], 0.5 * SO.nucleo_e_tattica(d, "ORO_EUR", nucleo=0.5)["ORO_EUR"]),
        "Torneo dell'oro 2 (2026-11-07)",
