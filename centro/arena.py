@@ -22,10 +22,17 @@ sys.path.insert(0, RADICE)
 from bot_definitivo import ricette as R  # noqa: E402
 from torneo import strategie as ST  # noqa: E402
 from torneo import strategie_oro as SO  # noqa: E402
+from torneo import strategie_ricerca as SR  # noqa: E402
 from torneo.motore import Costi, simula  # noqa: E402
 
 MERCATI = {"BTC_EUR": "BTC/EUR", "ETH_EUR": "ETH/EUR", "SOL_EUR": "SOL/EUR", "ORO_EUR": "PAXG/EUR"}
-NOMI_MERCATI = {"BTC_EUR": "Bitcoin", "ETH_EUR": "Ether", "SOL_EUR": "Solana", "ORO_EUR": "Oro (PAXG)"}
+NOMI_MERCATI = {"BTC_EUR": "Bitcoin", "ETH_EUR": "Ether", "SOL_EUR": "Solana", "ORO_EUR": "Oro (PAXG)",
+                "LQQ_EUR": "Nasdaq 100 a leva 2 (ETF LQQ)", "QQQ_USD": "Nasdaq 100 in dollari (QQQ, solo segnale)"}
+# mercati da Yahoo (ETF, indici): candele giornaliere a borsa chiusa, scaricate dal centro (server.aggiorna_yahoo).
+# CHIUSURA_UTC = ora UTC dopo cui la candela del giorno è chiusa (con un'ora di margine per l'ora legale).
+MERCATI_YAHOO = {"LQQ_EUR": "LQQ.PA", "QQQ_USD": "QQQ"}
+CHIUSURA_UTC = {"LQQ.PA": 17, "QQQ": 22}
+COSTI_ETF = Costi(commissione=0.001, slittamento=0.0005, minimo_ordine_eur=5.0)
 # monete per il profilo 5 (solo candele giornaliere; il server tiene quelle che Kraken quota in euro)
 ALT = ["BTC", "ETH", "SOL", "XRP", "ADA", "DOGE", "DOT", "LTC", "LINK", "AVAX", "ATOM", "XLM", "ETC", "UNI", "FIL",
        "ALGO", "AAVE", "NEAR", "ICP", "TRX", "SHIB", "PEPE", "SUI", "APT", "ARB", "OP", "INJ", "SEI", "RENDER", "IMX",
@@ -146,6 +153,16 @@ STRATEGIE = [
           "Come il Profilo 3, ma ribilancia solo quando un peso si sposta di oltre 20 punti: meno ordini piccoli e meno "
           "commissioni. Nel torneo 2020-2026: +29,1% l'anno contro +26,1% del Profilo 3, anche con costi doppi."),
      "soglia": 0.20},
+    # --- ricerca di ogni notte (ricerca_giornaliera/): entrano da sole quando passano tutti i cancelli del banco.
+    # Ognuna ha la sua partenza: il giorno dopo l'ultimo dato visto nella prova (i giorni prima non valgono come prova).
+    {**_s("nasdaq2", "Nasdaq 100 a leva 2 con filtro di tendenza", "ricerca", "1d", ["LQQ_EUR", "LIQ", "QQQ_USD"],
+          lambda d: SR.nasdaq_leva_filtro(d, n=150), "Ricerca di ogni notte (2026-11-08); Gayed e Bilello (2016)",
+          "ETF europeo a leva 2 sul Nasdaq 100 (LQQ, in euro) quando il Nasdaq in dollari chiude sopra la sua media "
+          "a 150 giorni di borsa, altrimenti liquidità all'€STR. Sul banco 2009-2026: +28,8% l'anno, calo massimo 42%; "
+          "esame dal 2023 +36,2% l'anno. Si compra in borsa (Parigi o Milano), non su Kraken: con 100 € la "
+          "commissione fissa del broker pesa."),
+     "costi": {"LQQ_EUR": COSTI_ETF, "LIQ": Costi(commissione=0.0, slittamento=0.0), "QQQ_USD": Costi(commissione=0.0, slittamento=0.0)},
+     "partenza": "2026-11-09"},
 ]
 PER_ID = {s["id"]: s for s in STRATEGIE}
 
@@ -207,7 +224,11 @@ def esegui(s: dict, chiusi: dict, correnti: dict, partenza: pd.Timestamp, capita
     tutti = con_ora[base].index
     W = W.reindex(tutti).ffill().fillna(0.0)
     passo = pd.Timedelta(days=1) if tf == "1d" else pd.Timedelta(hours=1)
-    W = W.loc[partenza - passo:]
+    partenza = max(partenza, pd.Timestamp(s["partenza"])) if s.get("partenza") else partenza
+    # si parte dall'ultima candela PRIMA della partenza (per le criptovalute è il giorno prima; per un ETF, che non
+    # ha candele nel fine settimana, è l'ultimo giorno di borsa): la sua decisione si esegue all'apertura successiva
+    prima = W.loc[:partenza - passo]
+    W = pd.concat([prima.iloc[-1:], W.loc[partenza:]]) if len(prima) else W.loc[partenza:]
     if len(W) < 2:
         return {"valore": capitale, "rendimento": 0.0, "pesi": {m: 0.0 for m in s["mercati"]}, "ordini": [], "equity": []}
     reg = []

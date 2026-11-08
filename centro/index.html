@@ -55,7 +55,7 @@ tbody tr.sel { background: #173a37; }
 .chip.confronto { color: var(--tenue); } .chip.letteratura { color: #9fb5ff; border-color: #34426e; }
 .chip.dentro { color: var(--compra); border-color: #2f6b3a; } .chip.fuori { color: var(--tenue); }
 .chip.oro { color: #e8c766; border-color: #7a6a2c; } .chip.mix { color: #ff9f7a; border-color: #7a4a35; } .chip.short { color: var(--vendi, #f2655b); border-color: #7a3530; }
-.chip.mesi { color: #7fd1e8; border-color: #2c5f6e; }
+.chip.mesi { color: #7fd1e8; border-color: #2c5f6e; } .chip.ricerca { color: #b8e07a; border-color: #4f6a2c; }
 .grafico { height: 360px; } .grafico.basso { height: 220px; }
 .kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 12px; }
 .kpi div { background: var(--pannello2); border: 1px solid var(--riga); border-radius: 10px; padding: 10px 12px; }
@@ -175,8 +175,8 @@ const STATO = { budget: 100, vista: "vivo", selVivo: "p1", selStorico: "p1", dat
 const eur = (v, d = 2) => v == null ? "—" : v.toLocaleString("it-IT", { minimumFractionDigits: d, maximumFractionDigits: d }) + " €";
 const pct = (v, d = 1) => v == null ? "—" : (v >= 0 ? "+" : "−") + Math.abs(v * 100).toLocaleString("it-IT", { minimumFractionDigits: d, maximumFractionDigits: d }) + "%";
 const quando = (t, conOra = true) => { const d = new Date(t * 1000); return d.toLocaleDateString("it-IT", { day: "2-digit", month: "2-digit", year: "2-digit" }) + (conOra ? " " + d.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }) : ""); };
-const NOMI = new Proxy({ BTC_EUR: "Bitcoin", ETH_EUR: "Ether", SOL_EUR: "Solana", ORO_EUR: "Oro", LIQ: "Liquidità" }, { get: (o, k) => o[k] || String(k).replace("_EUR", "") });
-const GRUPPI = { profilo: "profilo", video: "dai video", letteratura: "letteratura", confronto: "confronto", oro: "solo oro", mix: "oro + bitcoin", mesi: "mesi regolari" };
+const NOMI = new Proxy({ BTC_EUR: "Bitcoin", ETH_EUR: "Ether", SOL_EUR: "Solana", ORO_EUR: "Oro", LIQ: "Liquidità", LQQ_EUR: "Nasdaq ×2 (LQQ)", QQQ_USD: "Nasdaq (segnale)" }, { get: (o, k) => o[k] || String(k).replace("_EUR", "") });
+const GRUPPI = { profilo: "profilo", video: "dai video", letteratura: "letteratura", confronto: "confronto", oro: "solo oro", mix: "oro + bitcoin", mesi: "mesi regolari", ricerca: "ricerca notturna" };
 // ordini: «vende» che apre uno short e «compra» che lo chiude si chiamano col loro nome
 const SHORT = 0.004;
 function azione(o) {
@@ -259,7 +259,7 @@ function disegnaArena(d) {
 }
 // ---------------------------------------------------------------- la gara giorno per giorno
 const FILTRI_GARA = { oro: ["Oro e miscele", ["oro", "mix"]], mesi: ["Mesi regolari", ["mesi"]], profili: ["Profili", ["profilo"]],
-  video: ["Letteratura", ["letteratura"]], tutte: ["Tutte", null] };
+  video: ["Letteratura", ["letteratura"]], ricerca: ["Ricerca notturna", ["ricerca"]], tutte: ["Tutte", null] };
 const COLORI_GARA = ["#4cc3ae", "#6aa8ea", "#b49ae0", "#f2655b", "#3fb950", "#e8c15a", "#ff8fb1", "#9fb5ff", "#c6d36b", "#7fd1e8", "#d98cf0", "#f6b26b"];
 const COLORI_CONFRONTO = { oro: "#e2ad55", btc: "#f0a04b", mista: "#8fa1b3" };
 function disegnaGara(d) {

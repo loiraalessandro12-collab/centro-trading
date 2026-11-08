@@ -158,6 +158,60 @@ def aggiorna_liquidita() -> None:
         S.correnti["1d"]["LIQ"] = None
 
 
+_YAHOO = {"ultimo": 0.0}
+
+
+def scarica_yahoo(simbolo: str, periodo: str = "3y") -> pd.DataFrame:
+    """Candele giornaliere da Yahoo (API pubblica dei grafici), prezzi aggiustati per dividendi e frazionamenti.
+    Le date sono giorni di borsa (mezzanotte, senza fuso), come le candele giornaliere di Kraken."""
+    import urllib.parse
+    import urllib.request
+    url = (f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(simbolo)}?range={periodo}"
+           "&interval=1d&events=div%2Csplits&includeAdjustedClose=true")
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/126.0"})
+    j = json.load(urllib.request.urlopen(req, timeout=30))["chart"]["result"][0]
+    q = j["indicators"]["quote"][0]
+    df = pd.DataFrame({k: q.get(k) for k in ("open", "high", "low", "close", "volume")},
+                      index=pd.to_datetime(j["timestamp"], unit="s").normalize()).astype(float)
+    adj = (j["indicators"].get("adjclose") or [{}])[0].get("adjclose")
+    if adj is not None:
+        k = pd.Series(adj, index=df.index, dtype=float) / df["close"]
+        for c in ("open", "high", "low", "close"):
+            df[c] = df[c] * k
+    df = df[~df.index.duplicated(keep="last")].dropna(subset=["close"])
+    df["open"] = df["open"].fillna(df["close"])
+    df["high"] = df[["high", "open", "close"]].max(axis=1)
+    df["low"] = df[["low", "open", "close"]].min(axis=1)
+    df["volume"] = df["volume"].fillna(0.0)
+    df.index.name = "tempo"
+    return df
+
+
+def aggiorna_yahoo(forza: bool = False) -> None:
+    """ETF e indici della gara (A.MERCATI_YAHOO): al massimo ogni 30 minuti; solo candele a borsa chiusa (la candela
+    di oggi entra dopo l'ora di chiusura in A.CHIUSURA_UTC). Se Yahoo non risponde si usano le candele salvate."""
+    if not A.MERCATI_YAHOO or (not forza and time.time() - _YAHOO["ultimo"] < 1800):
+        return
+    adesso = _ora_utc()
+    for m, simbolo in A.MERCATI_YAHOO.items():
+        vecchio = _leggi_cache(m, "1d")
+        tutto = vecchio
+        try:
+            df = scarica_yahoo(simbolo)
+            if len(df) and df.index[-1].date() >= adesso.date() and adesso.hour < A.CHIUSURA_UTC.get(simbolo, 22):
+                df = df.iloc[:-1]                       # la candela di oggi non è ancora chiusa
+            tutto = pd.concat([vecchio[~vecchio.index.isin(df.index)], df]).sort_index() if len(vecchio) else df
+            tutto.to_csv(os.path.join(CACHE, f"{m}_1d.csv"), index_label="tempo")
+        except Exception as e:  # noqa: BLE001
+            S.errore(f"Yahoo {simbolo} non raggiungibile, uso le candele salvate: {type(e).__name__}")
+        if len(tutto):
+            with S.lock:
+                S.chiusi["1d"][m] = tutto
+                S.correnti["1d"][m] = None
+        time.sleep(0.5)
+    _YAHOO["ultimo"] = time.time()
+
+
 def aggiorna_monete(ex) -> None:
     """Candele giornaliere delle monete del profilo 5 (solo quelle quotate in euro su Kraken)."""
     adesso = _ora_utc()
@@ -252,6 +306,12 @@ def calcola_storico() -> None:
         from torneo.gara import carica_giornalieri, leggi
         d = carica_giornalieri()
         d["LIQ"] = A.candele_liquidita(tassi_estr())
+        for m, simbolo in A.MERCATI_YAHOO.items():     # ETF e indici: storia completa (frazionamenti corretti)
+            try:
+                from torneo import banco
+                d[m] = banco.yahoo(simbolo)[0]
+            except Exception:  # noqa: BLE001
+                d[m] = scarica_yahoo(simbolo, "max")
         orari = {"BTC_EUR": leggi(os.path.join(RADICE, "dati", "BTC-EUR_1h.csv"))}
         for s in A.STRATEGIE:
             try:
@@ -278,6 +338,7 @@ def ciclo() -> None:
         try:
             if time.time() - ultima_candela >= CONFIG["aggiorna_candele_s"]:
                 aggiorna_candele(ex)
+                aggiorna_yahoo()            # ETF e indici: da sola si limita a una volta ogni 30 minuti
                 ultima_candela = time.time()
             S.fase = "leggo i prezzi e calcolo l'arena"
             aggiorna_prezzi(ex)

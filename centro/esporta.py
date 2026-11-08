@@ -45,6 +45,7 @@ def main():
     import ccxt
     ex = ccxt.kraken({"enableRateLimit": True, "timeout": 20000})
     SV.aggiorna_candele(ex)
+    SV.aggiorna_yahoo(forza=True)       # ETF e indici della gara (ricerca di ogni notte)
     SV.aggiorna_monete(ex)
     SV.aggiorna_prezzi(ex)
     SV.ricalcola_arena()
