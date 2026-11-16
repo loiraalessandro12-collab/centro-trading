@@ -515,13 +515,14 @@ function vistaStrategia(id) {
 }
 
 // ---------------------------------------------------------------- vista: Laboratorio
-let filtroLab = "Profittevoli";
+let filtroLab = "In gara";
 const VERSI = {"solo lunga": "↑ lunga", "solo corta": "↓ corta", "lunga e corta": "↕ lunga e corta"};
 function vistaLab() {
   const f = S.fabbrica;
   if (!f) return errore() || "<div class='vuoto'>Il laboratorio non ha ancora pubblicato risultati.</div>";
-  const filtri = ["Profittevoli", "Tutte", "Solo lunghe", "Solo corte", "Lunghe e corte"];
+  const filtri = ["In gara", "Profittevoli", "Escluse", "Solo lunghe", "Solo corte", "Lunghe e corte", "Tutte"];
   const sel = f.risultati.filter((r) => filtroLab === "Tutte" || (filtroLab === "Profittevoli" && r.profittevole) ||
+    (filtroLab === "In gara" && !r.fuori) || (filtroLab === "Escluse" && r.fuori) ||
     (filtroLab === "Solo lunghe" && r.versione === "L") || (filtroLab === "Solo corte" && r.versione === "C") || (filtroLab === "Lunghe e corte" && r.versione === "LC"));
   const maxCat = Math.max(...f.famiglie.map((x) => x.catalogo));
   return `<div><div class="etichetta">Backtest · 30 anni di dati</div><h1>Laboratorio</h1></div>
@@ -529,7 +530,7 @@ function vistaLab() {
     <div class="dato"><div class="etichetta">Nel catalogo</div><b class="num">${f.catalogo}</b><div class="muted" style="font-size:12px">+ ${f.escluse} escluse col motivo</div></div>
     <div class="dato"><div class="etichetta">Provate</div><b class="num">${f.regole_provate}</b><div class="muted" style="font-size:12px">${f.versioni_provate} versioni</div></div>
     <div class="dato"><div class="etichetta">Passano l'esame</div><b class="num pos-t">${f.regole_profittevoli}</b><div class="muted" style="font-size:12px">${f.versioni_profittevoli} versioni</div></div>
-    <div class="dato"><div class="etichetta">Aggiornato</div><b class="num" style="font-size:15px">${data(f.aggiornato, {day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"})}</b></div>
+    <div class="dato"><div class="etichetta">Vanno in gara</div><b class="num" style="color:var(--lime)">${f.in_gara}</b><div class="muted" style="font-size:12px">aggiornato il ${data(f.aggiornato, {day: "numeric", month: "short"})}</div></div>
   </div>
   <section class="card">
     <h2>Per famiglia</h2>
@@ -540,8 +541,8 @@ function vistaLab() {
   </section>
   <div class="chips" role="group" aria-label="Filtra i risultati">${filtri.map((x) => `<button class="chip" data-lab="${esc(x)}" aria-pressed="${x === filtroLab}">${esc(x)}</button>`).join("")}</div>
   <section class="card" style="padding-top:4px;padding-bottom:4px">
-    ${sel.slice(0, 80).map((r) => `<details class="voce"><summary><span style="min-width:0"><span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.nome)}</span>
-      <small class="muted" style="font-weight:500">${esc(VERSI[r.direzione] || r.direzione)} · ${nf(0).format(r.anni)} anni · calo ${pct(-r.calo, 0)}</small></span>
+    ${sel.slice(0, 400).map((r) => `<details class="voce"><summary><span style="min-width:0"><span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.nome)}</span>
+      <small class="muted" style="font-weight:500">${esc(VERSI[r.direzione] || r.direzione)} · ${nf(0).format(r.anni)} anni · calo ${pct(-r.calo, 0)}${r.fuori && r.profittevole ? ` · <span class="neg-t">fuori: ${esc(r.fuori)}</span>` : ""}</small></span>
       <b class="num ${segno(r.eccesso)}" style="white-space:nowrap">${pct(r.eccesso, 1)}<small class="muted" style="font-weight:500">/anno</small></b></summary>
       <div class="testo"><div class="dati-griglia">
         <div class="dato"><div class="etichetta">Ultimi 10 anni</div><b class="num ${segno(r.ultimi10)}">${pct(r.ultimi10, 1)}</b></div>
@@ -553,11 +554,17 @@ function vistaLab() {
   </section>
   <p class="avviso">I numeri sono il rendimento all'anno SOPRA la liquidità (conto deposito), dopo i costi: «passa» chi ha reso più che lasciare i soldi fermi. Con tante strategie provate, alcune passano anche per fortuna: per questo la gara dal vivo decide.</p>
   <section class="card">
-    <div class="testa"><h2>Create da Claude</h2><span class="pillola misto">da provare</span></div>
+    <div class="testa"><h2>Create da Claude</h2><span class="pillola misto">provate</span></div>
     <p class="testo" style="margin:0 0 12px">Regole scritte il ${esc(f.nostre.scritte_il.split("-").reverse().join("/"))}, prima di guardare i risultati: così non si possono aggiustare a posteriori. Passano lo stesso esame delle altre.</p>
     <div style="display:flex;flex-direction:column;gap:10px">${f.nostre.strategie.map((x) => `<div class="nostra"><h3>${esc(x.nome)}<span class="pillola fuori">${esc(VERSI[x.direzione] || x.direzione)}</span></h3>
-      <p class="testo" style="margin:6px 0 4px">${esc(x.regole)}</p><p class="muted" style="font-size:13px;margin:0">${esc(x.idea)} · ${esc(x.mercati)}</p></div>`).join("")}</div>
+      <p class="testo" style="margin:6px 0 4px">${esc(x.regole)}</p><p class="muted" style="font-size:13px;margin:0">${esc(x.idea)} · ${esc(x.mercati)}</p>${risultatoNostra(f, x)}</div>`).join("")}</div>
   </section>`;
+}
+
+function risultatoNostra(f, x) {
+  const r = f.risultati.find((y) => y.id === x.id && y.pubblicata);
+  if (!r) return "";
+  return `<p class="testo num" style="margin:8px 0 0">Prova sui dati passati (${nf(0).format(r.anni)} anni): <b class="${segno(r.eccesso)}">${pct(r.eccesso, 1)}</b> l'anno sopra la liquidità, calo massimo ${pct(-r.calo, 0)}. ${r.fuori ? `<span class="pillola fuori">${esc(r.fuori)}</span>` : `<span class="pillola lungo">va in gara</span>`}</p>`;
 }
 
 // ---------------------------------------------------------------- vista: Mercati
