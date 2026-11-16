@@ -541,7 +541,7 @@ function vistaLab() {
   <div class="chips" role="group" aria-label="Filtra i risultati">${filtri.map((x) => `<button class="chip" data-lab="${esc(x)}" aria-pressed="${x === filtroLab}">${esc(x)}</button>`).join("")}</div>
   <section class="card" style="padding-top:4px;padding-bottom:4px">
     ${sel.slice(0, 80).map((r) => `<details class="voce"><summary><span style="min-width:0"><span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.nome)}</span>
-      <small class="muted" style="font-weight:500">${esc(VERSI[r.direzione] || r.direzione)} · ${r.anni} anni · calo ${pct(-r.calo, 0)}</small></span>
+      <small class="muted" style="font-weight:500">${esc(VERSI[r.direzione] || r.direzione)} · ${nf(0).format(r.anni)} anni · calo ${pct(-r.calo, 0)}</small></span>
       <b class="num ${segno(r.eccesso)}" style="white-space:nowrap">${pct(r.eccesso, 1)}<small class="muted" style="font-weight:500">/anno</small></b></summary>
       <div class="testo"><div class="dati-griglia">
         <div class="dato"><div class="etichetta">Ultimi 10 anni</div><b class="num ${segno(r.ultimi10)}">${pct(r.ultimi10, 1)}</b></div>
