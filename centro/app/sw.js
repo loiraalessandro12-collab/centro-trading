@@ -1,5 +1,5 @@
 // Sfida 90: lavora anche senza rete. Prima prova la rete (dati e bozza cambiano spesso), poi l'ultima copia salvata.
-const VERSIONE = "sfida90-1";
+const VERSIONE = "sfida90-2";
 const GUSCIO = ["./", "index.html", "manifest.webmanifest", "icona-192.png", "icona-512.png", "apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {

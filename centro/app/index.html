@@ -19,17 +19,17 @@
   --text:#ECF3EE; --muted:#93A69B; --dim:#64786C;
   --lime:#C6F25B; --lime-ink:#0A1408; --lime-soft:rgba(198,242,91,.12);
   --pos:#A3D93E; --neg:#F2709C; --conf:#8A9A90; --neutro:#1A2620;
-  --r:18px; color-scheme:dark;
+  --r:18px; color-scheme:dark; --alto:env(safe-area-inset-top,0px); --basso:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Inter,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:rgba(6,11,8,.92);z-index:20}
+/* App sul telefono a schermo intero: la barra in alto si allunga sotto ora e batteria (--alto), quella in basso sopra la linea di casa (--basso) */
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
 a{color:var(--lime)}
 .num{font-variant-numeric:tabular-nums}
 .pos-t{color:var(--pos)} .neg-t{color:var(--neg)} .muted{color:var(--muted)} .dim{color:var(--dim)}
-header.barra{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:rgba(6,11,8,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+header.barra{position:sticky;top:0;z-index:10;padding-top:var(--alto);background:rgba(6,11,8,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
 .barra .dentro{max-width:560px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:10px max(16px,env(safe-area-inset-right)) 10px max(16px,env(safe-area-inset-left))}
 .marchio{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:.2px;font-size:17px}
 .marchio img{width:28px;height:28px;border-radius:8px}
@@ -38,7 +38,7 @@ header.barra{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;backgro
 .tasto-tondo svg{width:18px;height:18px}
 .gira svg{animation:gira 1s linear infinite}
 @keyframes gira{to{transform:rotate(360deg)}}
-main{max-width:560px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-right)) calc(98px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:14px}
+main{max-width:560px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-right)) calc(98px + var(--basso)) max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:14px}
 h1{font-size:26px;line-height:1.15;margin:4px 0 0;letter-spacing:-.3px;text-wrap:balance}
 h2{font-size:17px;margin:0;letter-spacing:-.1px}
 h3{font-size:15px;margin:0}
@@ -75,7 +75,7 @@ h3{font-size:15px;margin:0}
 .chips::-webkit-scrollbar{display:none}
 .chip{padding:8px 13px;border-radius:99px;border:1px solid var(--line2);font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;background:var(--card)}
 .chip[aria-pressed="true"]{background:var(--lime);border-color:var(--lime);color:var(--lime-ink)}
-.cerca{width:100%;background:var(--card);border:1px solid var(--line2);border-radius:14px;padding:11px 14px;color:var(--text);font:inherit}
+.cerca{width:100%;background:var(--card);border:1px solid var(--line2);border-radius:14px;padding:11px 14px;color:var(--text);font:inherit;font-size:16px}
 .cerca::placeholder{color:var(--dim)}
 .grafico{position:relative;width:100%;touch-action:pan-y;user-select:none;-webkit-user-select:none}
 .grafico svg{display:block;width:100%;height:100%;overflow:visible}
@@ -121,7 +121,7 @@ details.voce .testo{padding:0 0 14px}
 .mini{min-width:132px;flex:1;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
 .mini b{display:block;font-size:15px;margin-top:2px}
 .mini small{font-size:12px}
-nav.schede{position:fixed;left:0;right:0;bottom:0;z-index:10;background:rgba(9,15,12,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
+nav.schede{position:fixed;left:0;right:0;bottom:0;z-index:10;background:rgba(9,15,12,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-right)) calc(6px + var(--basso)) max(8px,env(safe-area-inset-left))}
 nav.schede .dentro{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
 nav.schede a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;font-size:10.5px;font-weight:600;color:var(--dim);text-decoration:none}
 nav.schede a svg{width:23px;height:23px}
