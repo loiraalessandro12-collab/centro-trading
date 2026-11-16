@@ -1,0 +1,17 @@
+{
+  "name": "Sfida 90",
+  "short_name": "Sfida 90",
+  "description": "La sfida delle strategie di trading: soldi finti, dati veri, aggiornata ogni mezz'ora.",
+  "lang": "it",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#060B08",
+  "theme_color": "#060B08",
+  "icons": [
+    {"src": "icona-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icona-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icona-maschera-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

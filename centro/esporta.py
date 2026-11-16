@@ -89,6 +89,9 @@ def main():
     icona = os.path.join(QUI, "icona.png")
     if os.path.exists(icona):
         shutil.copy(icona, os.path.join(out, "icona.png"))
+    app = os.path.join(QUI, "app")
+    if os.path.isdir(app):      # l'app «Sfida 90» per il telefono: legge gli stessi file di dati/
+        shutil.copytree(app, os.path.join(out, "app"), dirs_exist_ok=True)
     print(f"Sito esportato in {out}: {len(os.listdir(dati))} file di dati", flush=True)
 
 
